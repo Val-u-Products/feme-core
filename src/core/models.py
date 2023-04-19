@@ -18,25 +18,25 @@ class ColeTabla(models.Model):
 
 
 class DfSalonKpi(models.Model):
-    colegio = models.TextField(db_column='Colegio', blank=True, null=True)  # Field name made lowercase.
-    id_monitor = models.TextField(db_column='ID_Monitor', blank=True, null=True)  # Field name made lowercase.
-    monitor = models.TextField(db_column='Monitor', blank=True, null=True)  # Field name made lowercase.
-    apellido_monitor = models.TextField(db_column='Apellido Monitor', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    grado = models.TextField(db_column='Grado', blank=True, null=True)  # Field name made lowercase.
-    seccion = models.TextField(db_column='Sección', blank=True, null=True)  # Field name made lowercase.
-    materia_feme = models.TextField(db_column='Materia FEME', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    zoho_link = models.TextField(db_column='Zoho Link', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    modulos = models.TextField(db_column='Modulos', blank=True, null=True)  # Field name made lowercase.
-    salon_mol = models.TextField(db_column='Salon_Mol', blank=True, null=True)  # Field name made lowercase.
-    id_salon = models.TextField(db_column='ID_Salon', blank=True, null=True)  # Field name made lowercase.
-    inscripcion_correcto_t_l3 = models.BigIntegerField(db_column='Inscripcion_correcto_T_L3', blank=True, null=True)  # Field name made lowercase.
-    id_mol = models.TextField(db_column='ID_Mol', blank=True, null=True)  # Field name made lowercase.
+    colegio = models.TextField(db_column='Colegio', blank=True, null=True)  
+    id_monitor = models.TextField(db_column='ID_Monitor', blank=True, null=True)  
+    monitor = models.TextField(db_column='Monitor', blank=True, null=True)  
+    apellido_monitor = models.TextField(db_column='Apellido Monitor', blank=True, null=True)  
+    grado = models.TextField(db_column='Grado', blank=True, null=True) 
+    seccion = models.TextField(db_column='Sección', blank=True, null=True)  
+    materia_feme = models.TextField(db_column='Materia FEME', blank=True, null=True)  
+    zoho_link = models.TextField(db_column='Zoho Link', blank=True, null=True)  
+    modulos = models.TextField(db_column='Modulos', blank=True, null=True)  
+    salon_mol = models.TextField(db_column='Salon_Mol', blank=True, null=True) 
+    id_salon = models.TextField(db_column='ID_Salon', blank=True, null=True)  
+    inscripcion_correcto_t_l3 = models.BigIntegerField(db_column='Inscripcion_correcto_T_L3', blank=True, null=True)  
+    id_mol = models.TextField(db_column='ID_Mol', blank=True, null=True)  
     uuid_salon = models.TextField(blank=True, null=True)
-    total_estudiantes = models.BigIntegerField(db_column='Total estudiantes', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    iniciaron = models.BigIntegerField(db_column='Iniciaron', blank=True, null=True)  # Field name made lowercase.
-    llevan_50_field = models.BigIntegerField(db_column='Llevan +50%', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
-    completaron = models.BigIntegerField(db_column='Completaron', blank=True, null=True)  # Field name made lowercase.
-    fecha_insc = models.TextField(db_column='Fecha_Insc', blank=True, null=True)  # Field name made lowercase.
+    total_estudiantes = models.BigIntegerField(db_column='Total estudiantes', blank=True, null=True)  
+    iniciaron = models.BigIntegerField(db_column='Iniciaron', blank=True, null=True)  
+    llevan_50_field = models.BigIntegerField(db_column='Llevan +50%', blank=True, null=True)  
+    completaron = models.BigIntegerField(db_column='Completaron', blank=True, null=True) 
+    fecha_insc = models.TextField(db_column='Fecha_Insc', blank=True, null=True)  
 
     class Meta:
         managed = False
