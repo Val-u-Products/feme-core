@@ -68,7 +68,7 @@ class MonitorTabla(models.Model):
     uuid_mont = models.TextField(primary_key=True, null=False, blank=True, db_column='uuid_mont')
     monitor = models.TextField(blank=True, null=True)  
     materia_feme = models.TextField(blank=True, null=True)  
-    field_puntaje = models.FloatField(db_column='%_puntaje', blank=True, null=True)  
+    field_puntaje = models.FloatField(db_column='porciento_puntaje', blank=True, null=True)  
     whatsapp = models.FloatField(blank=True, null=True)  
     email_m = models.TextField(blank=True, null=True)  
     id_thinki_mon = models.FloatField(blank=True, null=True)  
@@ -97,7 +97,7 @@ class SalonKpiModulo(models.Model):
     modulos = models.TextField(blank=True, null=True) 
     total_estudiantes = models.IntegerField(blank=True, null=True)
     iniciaron = models.IntegerField(blank=True, null=True)
-    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_+50%')
+    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_mas50_porciento')
     completaron = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -128,51 +128,3 @@ class SalonTablaBeta(models.Model):
 
     class Meta:
         db_table = 'salon_tabla_beta'
-
-
-class SalonKpiModuloBeta(models.Model):
-    
-    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    grado = models.TextField(blank=True, null=True)
-    seccion = models.TextField(blank=True, null=True)
-    modulos = models.TextField(blank=True, null=True) 
-    total_estudiantes = models.IntegerField(blank=True, null=True)
-    iniciaron = models.IntegerField(blank=True, null=True)
-    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_+50%')
-    completaron = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'salon_kpi_modulo_beta'
-
-
-class SalonKpiModuloBeta2(models.Model):
-    id = models.AutoField(primary_key=True, db_column='id')
-    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    grado = models.TextField(blank=True, null=True)
-    seccion = models.TextField(blank=True, null=True)
-    modulos = models.TextField(blank=True, null=True) 
-    total_estudiantes = models.IntegerField(blank=True, null=True)
-    iniciaron = models.IntegerField(blank=True, null=True)
-    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_+50%')
-    completaron = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'salon_kpi_modulo_beta_2'
-
-
-class SalonKpiModuloBeta3(models.Model):
-    id = models.AutoField(primary_key=True, db_column='id')
-    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    grado = models.TextField(blank=True, null=True)
-    seccion = models.TextField(blank=True, null=True)
-    modulos = models.TextField(blank=True, null=True) 
-    total_estudiantes = models.IntegerField(blank=True, null=True)
-    iniciaron = models.IntegerField(blank=True, null=True)
-    llevan = models.IntegerField(blank=True, null=True, db_column='llevan')
-    completaron = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'salon_kpi_modulo_beta_3'
