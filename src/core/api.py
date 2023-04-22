@@ -1,6 +1,18 @@
 from rest_framework import viewsets
-from .models import ColeTabla, EstudiantesTabla, Modulos, QuizTabla, SalonTabla
-from .serializers import ColeTablaSerializer, EstudiantesTablaSerializer, ModulosSerializer, QuizTablaSerializer, SalonTablaSerializer
+from .models import (ColeTabla, 
+                     EstudiantesTabla, 
+                     Modulos, 
+                     QuizTabla, 
+                     SalonTabla, 
+                     MonitorTabla, 
+                     SalonKpiModulo)
+from .serializers import (ColeTablaSerializer, 
+                          EstudiantesTablaSerializer, 
+                          ModulosSerializer, 
+                          QuizTablaSerializer, 
+                          SalonTablaSerializer, 
+                          MonitorTablaSerializer, 
+                          SalonKpiModuloSerializer)
 
 
 class ColeTablaViewSet(viewsets.ReadOnlyModelViewSet):
@@ -27,3 +39,12 @@ class SalonTablaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SalonTabla.objects.all()
     serializer_class = SalonTablaSerializer
 
+
+class MonitorTablaViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = MonitorTabla.objects.all()
+    serializer_class = MonitorTablaSerializer
+
+
+class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SalonKpiModulo.objects.all()
+    serializer_class = SalonKpiModuloSerializer
