@@ -68,10 +68,11 @@ class MonitorTabla(models.Model):
     uuid_mont = models.TextField(primary_key=True, null=False, blank=True, db_column='uuid_mont')
     monitor = models.TextField(blank=True, null=True)  
     materia_feme = models.TextField(blank=True, null=True)  
-    field_puntaje = models.FloatField(db_column='porciento_puntaje', blank=True, null=True)  
+    field_puntaje = models.FloatField(db_column='per_puntaje', blank=True, null=True)  
     whatsapp = models.FloatField(blank=True, null=True)  
     email_m = models.TextField(blank=True, null=True)  
-    id_thinki_mon = models.FloatField(blank=True, null=True)  
+    id_thinki_mon = models.FloatField(blank=True, null=True)
+    key = models.CharField(max_length=100, unique=True, blank=True, null=True)
 
     class Meta:
         db_table = 'monitor_tabla'
@@ -97,11 +98,30 @@ class SalonKpiModulo(models.Model):
     modulos = models.TextField(blank=True, null=True) 
     total_estudiantes = models.IntegerField(blank=True, null=True)
     iniciaron = models.IntegerField(blank=True, null=True)
-    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_mas50_porciento')
+    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_50')
     completaron = models.IntegerField(blank=True, null=True)
+    created_at = models.DateTimeField()
 
     class Meta:
         db_table = 'salon_kpi_modulo'
+
+
+class Estatus(models.Model):
+    id_thinkific = models.ForeignKey(EstudiantesTabla, on_delete=models.CASCADE, db_column='id_thinkific')
+    modulo = models.TextField(blank=True, null=True)
+    id_modulo = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True, db_column='email_')
+    started_at = models.DateTimeField()
+    activated_at = models.DateTimeField()
+    expirated_at = models.DateTimeField()
+    completed_at = models.DateTimeField()
+    perc_completation = models.IntegerField(blank=True, null=True)
+    perc_videos = models.IntegerField(blank=True, null=True)
+    estatus = models.TextField(blank=True, null=True, db_column='estatus')
+    created_at = models.DateTimeField()
+
+    class Meta:
+        db_table = 'estatus'
 
 
 class MonitorTablaBeta(models.Model):
@@ -109,7 +129,7 @@ class MonitorTablaBeta(models.Model):
     uuid_mont = models.TextField(primary_key=True, null=False, blank=True)
     monitor = models.TextField(blank=True, null=True)  
     materia_feme = models.TextField(blank=True, null=True)  
-    field_puntaje = models.FloatField(db_column='%_puntaje', blank=True, null=True)  
+    field_puntaje = models.FloatField(db_column='per_puntaje', blank=True, null=True)  
     whatsapp = models.FloatField(blank=True, null=True)  
     email_m = models.TextField(blank=True, null=True)  
     id_thinki_mon = models.FloatField(blank=True, null=True)  
