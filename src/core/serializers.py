@@ -40,7 +40,7 @@ class SalonTablaSerializer(serializers.ModelSerializer):
 class MonitorTablaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MonitorTabla
-        fields = '__all__'
+        fields = '__all__'       
 
 
 class SalonKpiModuloSerializer(serializers.ModelSerializer):
