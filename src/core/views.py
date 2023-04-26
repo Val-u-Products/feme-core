@@ -13,10 +13,10 @@ def actualizar_key(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     nueva_key = secrets.token_urlsafe(16)
-    monitor.key = nueva_key
+    monitor.userToken = nueva_key
     monitor.save()
     
-    return Response({'key': nueva_key}, status=status.HTTP_200_OK)
+    return Response({'userToken': nueva_key}, status=status.HTTP_200_OK)
 
 # class ActualizarKeyView(APIView):
 #     def patch(self, request, uuid_mont):

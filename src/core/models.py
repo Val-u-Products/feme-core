@@ -72,7 +72,7 @@ class MonitorTabla(models.Model):
     whatsapp = models.FloatField(blank=True, null=True)  
     email_m = models.TextField(blank=True, null=True)  
     id_thinki_mon = models.FloatField(blank=True, null=True)
-    key = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    userToken = models.CharField(max_length=100, unique=True, blank=True, null=True, db_column='userToken')
 
     class Meta:
         db_table = 'monitor_tabla'
