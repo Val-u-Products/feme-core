@@ -13,7 +13,7 @@ conn = psycopg2.connect(
 query = "SELECT * FROM estudiantes_tabla"
 
 # Realizar 10,000 consultas en un bucle
-for i in range(1000):
+for i in range(5000):
     start_time = time.time()  # registrar el tiempo de inicio de la consulta
     cursor = conn.cursor()
     cursor.execute(query)

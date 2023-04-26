@@ -12,7 +12,7 @@ def actualizar_key(request, pk):
     except MonitorTabla.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    nueva_key = secrets.token_urlsafe(16)
+    nueva_key = secrets.token_urlsafe(12)
     monitor.userToken = nueva_key
     monitor.save()
     
