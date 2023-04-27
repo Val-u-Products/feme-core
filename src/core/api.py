@@ -3,6 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.response import Response
+
 from .models import (ColeTabla, 
                      EstudiantesTabla, 
                      Modulos, 
@@ -43,6 +45,38 @@ class ColeTablaViewSet(viewsets.ReadOnlyModelViewSet):
                     '^sexo_colegio', 
                     '^zoho_link'
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class EstudiantesTablaViewSet(viewsets.ReadOnlyModelViewSet):
@@ -87,6 +121,37 @@ class EstudiantesTablaViewSet(viewsets.ReadOnlyModelViewSet):
                     '^email_representante',
                     '^inscrito',
                     ]
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class ModulosViewSet(viewsets.ReadOnlyModelViewSet):
@@ -97,6 +162,38 @@ class ModulosViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['id_mol', 'nombre']
     search_fields = ['^id_mol', '^nombre']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class QuizTablaViewSet(viewsets.ReadOnlyModelViewSet):
@@ -137,6 +234,38 @@ class QuizTablaViewSet(viewsets.ReadOnlyModelViewSet):
                     '^respuesta_incorrecta_4',
                     '^explicacion_de_la_respueta_correcta',
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class SalonTablaViewSet(viewsets.ReadOnlyModelViewSet):
@@ -161,6 +290,38 @@ class SalonTablaViewSet(viewsets.ReadOnlyModelViewSet):
                     '^l3_22_23_2', 
                     '^l3_22_23_au'
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 
@@ -192,6 +353,38 @@ class MonitorTablaViewSet(viewsets.ReadOnlyModelViewSet):
                     '^id_thinki_mon', 
                     '^userToken'
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
@@ -222,6 +415,38 @@ class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
                     '^completaron', 
                     '^created_at'
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
 
 
 class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
@@ -276,3 +501,35 @@ class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
                     '^nota_total', 
                     '^nota_total_l'
                     ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
