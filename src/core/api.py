@@ -228,7 +228,7 @@ class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Estatus.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = SalonKpiModuloSerializer
+    serializer_class = EstatusSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = [
                         'id_thinkific', 
