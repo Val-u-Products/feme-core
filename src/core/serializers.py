@@ -4,7 +4,8 @@ from .models import (ColeTabla,
                      Modulos, QuizTabla, 
                      SalonTabla, 
                      MonitorTabla, 
-                     SalonKpiModulo)
+                     SalonKpiModulo,
+                     Estatus)
 
 
 class ColeTablaSerializer(serializers.ModelSerializer):
@@ -46,4 +47,10 @@ class MonitorTablaSerializer(serializers.ModelSerializer):
 class SalonKpiModuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalonKpiModulo
+        fields = '__all__'
+
+
+class EstatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Estatus
         fields = '__all__'

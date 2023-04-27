@@ -5,7 +5,8 @@ from .api import (ColeTablaViewSet,
                   QuizTablaViewSet, 
                   SalonTablaViewSet, 
                   MonitorTablaViewSet, 
-                  SalonKpiModuloViewSet)
+                  SalonKpiModuloViewSet,
+                  EstatusViewSet)
 
 
 router = routers.DefaultRouter()
@@ -17,5 +18,6 @@ router.register('quiztabla', QuizTablaViewSet, 'quiz_tabla')
 router.register('salontabla', SalonTablaViewSet, 'salon_tabla')
 router.register('monitortabla', MonitorTablaViewSet, 'monitor_tabla')
 router.register('salonkpimodulo', SalonKpiModuloViewSet, 'salon_kpi_modulo')
+router.register('estatus', EstatusViewSet, 'estatus')
 
 urlpatterns = router.urls
