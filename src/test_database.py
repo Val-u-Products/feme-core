@@ -3,10 +3,10 @@ import time
 
 # Configurar la conexión a la base de datos
 conn = psycopg2.connect(
-    host="val-u-data.chno4t1xw66s.sa-east-1.rds.amazonaws.com",
+    host="feme-db.cn4kllyvxz98.sa-east-1.rds.amazonaws.com",
     database="postgres",
-    user="postgres",
-    password="X31AveWXXKoAxOGBOAgH"
+    user="valu_db",
+    password="admindb12345#"
 )
 
 # Consulta de ejemplo
