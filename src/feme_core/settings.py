@@ -80,9 +80,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'X31AveWXXKoAxOGBOAgH',
-        'HOST': 'val-u-data.chno4t1xw66s.sa-east-1.rds.amazonaws.com',
+        'USER': 'valu_db',
+        'PASSWORD': 'admindb12345#',
+        'HOST': 'feme-db.cn4kllyvxz98.sa-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
