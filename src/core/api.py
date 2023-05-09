@@ -23,12 +23,13 @@ from .serializers import (ColeTablaSerializer,
                           EstatusSerializer)
 
 
-class ColeTablaViewSet(viewsets.ReadOnlyModelViewSet):
+class ColeTablaViewSet(viewsets.ModelViewSet):
     queryset = ColeTabla.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ColeTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'uuid_cole', 
                         'colegio', 
@@ -85,6 +86,7 @@ class EstudiantesTablaViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = EstudiantesTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'id_thinkific', 
                         'uuid_mont', 
@@ -160,6 +162,7 @@ class ModulosViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ModulosSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = ['id_mol', 'nombre']
     search_fields = ['^id_mol', '^nombre']
 
@@ -202,6 +205,7 @@ class QuizTablaViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = QuizTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'id_pregunta',
                         'id_mol', 
@@ -274,6 +278,7 @@ class SalonTablaViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SalonTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'uuid_salon', 
                         'id_monitor', 
@@ -331,6 +336,7 @@ class MonitorTablaViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MonitorTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'uuid_cole', 
                         'uuid_mont', 
@@ -393,6 +399,7 @@ class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = SalonKpiModuloSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'uuid_salon', 
                         'id_mol', 
@@ -455,6 +462,7 @@ class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = EstatusSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
                         'id_thinkific', 
                         'modulo', 
