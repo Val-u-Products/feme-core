@@ -5,18 +5,15 @@ from .models import (ColeTabla,
                      SalonTabla, 
                      MonitorTabla, 
                      SalonKpiModulo,
-                     Estatus)
+                     Estatus,
+                     Monitoreo,
+                     Feedback
+                     )
 
 
 class ColeTablaSerializer(serializers.ModelSerializer):
     class Meta:
         model = ColeTabla
-        fields = '__all__'
-
-
-class EstudiantesTablaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EstudiantesTabla
         fields = '__all__'
 
 
@@ -41,7 +38,13 @@ class SalonTablaSerializer(serializers.ModelSerializer):
 class MonitorTablaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MonitorTabla
-        fields = '__all__'       
+        fields = '__all__'
+
+
+class EstudiantesTablaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstudiantesTabla
+        fields = '__all__'
 
 
 class SalonKpiModuloSerializer(serializers.ModelSerializer):
@@ -53,4 +56,16 @@ class SalonKpiModuloSerializer(serializers.ModelSerializer):
 class EstatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estatus
+        fields = '__all__'
+
+
+class MonitoreoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monitoreo
+        fields = '__all__'
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
         fields = '__all__'
