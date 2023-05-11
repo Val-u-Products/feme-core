@@ -12,7 +12,10 @@ from .models import (ColeTabla,
                      SalonTabla, 
                      MonitorTabla, 
                      SalonKpiModulo,
-                     Estatus)
+                     Estatus,
+                     Monitoreo,
+                     Feedback
+                     )
 from .serializers import (ColeTablaSerializer, 
                           EstudiantesTablaSerializer, 
                           ModulosSerializer, 
@@ -20,7 +23,10 @@ from .serializers import (ColeTablaSerializer,
                           SalonTablaSerializer, 
                           MonitorTablaSerializer, 
                           SalonKpiModuloSerializer,
-                          EstatusSerializer)
+                          EstatusSerializer,
+                          MonitoreoSerializer,
+                          FeedbackSerializer
+                          )
 
 
 class ColeTablaViewSet(viewsets.ModelViewSet):
@@ -80,7 +86,243 @@ class ColeTablaViewSet(viewsets.ModelViewSet):
         return Response(response_list)
 
 
-class EstudiantesTablaViewSet(viewsets.ReadOnlyModelViewSet):
+class ModulosViewSet(viewsets.ModelViewSet):
+    queryset = Modulos.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ModulosSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = ['id_mol', 'nombre']
+    search_fields = ['^id_mol', '^nombre']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+
+
+class QuizTablaViewSet(viewsets.ModelViewSet):
+    queryset = QuizTabla.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = QuizTablaSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = [
+                        'id_pregunta',
+                        'id_mol', 
+                        'quiz', 
+                        'seccion', 
+                        'titulo_de_seccion', 
+                        'numero', 
+                        'tipo_de_pregunta', 
+                        'pregunta',
+                        'respuesta_correcta',
+                        'respuesta_incorrecta_1',
+                        'respuesta_incorrecta_2',
+                        'respuesta_incorrecta_3',
+                        'respuesta_incorrecta_4',
+                        'explicacion_de_la_respueta_correcta',
+                        ]
+    search_fields = [
+                    '^id_pregunta',
+                    '^id_mol', 
+                    '^quiz', 
+                    '^seccion', 
+                    '^titulo_de_seccion', 
+                    '^numero', 
+                    '^tipo_de_pregunta', 
+                    '^pregunta',
+                    '^respuesta_correcta',
+                    '^respuesta_incorrecta_1',
+                    '^respuesta_incorrecta_2',
+                    '^respuesta_incorrecta_3',
+                    '^respuesta_incorrecta_4',
+                    '^explicacion_de_la_respueta_correcta',
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+
+
+class SalonTablaViewSet(viewsets.ModelViewSet):
+    queryset = SalonTabla.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SalonTablaSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = [
+                        'uuid_salon', 
+                        'id_monitor', 
+                        'cierre_definitivo', 
+                        'l3_22_23', 
+                        'l3_22_23_2', 
+                        'l3_22_23_au'
+                        ]
+    search_fields = [
+                    '^uuid_salon', 
+                    '^id_monitor', 
+                    '^cierre_definitivo', 
+                    '^l3_22_23', 
+                    '^l3_22_23_2', 
+                    '^l3_22_23_au'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+
+
+class MonitorTablaViewSet(viewsets.ModelViewSet):
+    queryset = MonitorTabla.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = MonitorTablaSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = [
+                        'uuid_cole', 
+                        'uuid_mont', 
+                        'monitor', 
+                        'materia_feme', 
+                        'field_puntaje', 
+                        'whatsapp', 
+                        'email_m', 
+                        'id_thinki_mon', 
+                        'userToken'
+                        ]
+    search_fields = [
+                    '^uuid_cole', 
+                    '^uuid_mont', 
+                    '^monitor', 
+                    '^materia_feme', 
+                    '^field_puntaje', 
+                    '^whatsapp', 
+                    '^email_m', 
+                    '^id_thinki_mon', 
+                    '^userToken'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+
+
+class EstudiantesTablaViewSet(viewsets.ModelViewSet):
     queryset = EstudiantesTabla.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -156,244 +398,7 @@ class EstudiantesTablaViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(response_list)
 
 
-class ModulosViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Modulos.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = ModulosSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
-    filterset_fields = ['id_mol', 'nombre']
-    search_fields = ['^id_mol', '^nombre']
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
-        
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-                
-        fields_list = fields.split(',')
-
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
-
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
-
-        response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
-
-        return Response(response_list)
-
-
-class QuizTablaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = QuizTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = QuizTablaSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
-    filterset_fields = [
-                        'id_pregunta',
-                        'id_mol', 
-                        'quiz', 
-                        'seccion', 
-                        'titulo_de_seccion', 
-                        'numero', 
-                        'tipo_de_pregunta', 
-                        'pregunta',
-                        'respuesta_correcta',
-                        'respuesta_incorrecta_1',
-                        'respuesta_incorrecta_2',
-                        'respuesta_incorrecta_3',
-                        'respuesta_incorrecta_4',
-                        'explicacion_de_la_respueta_correcta',
-                        ]
-    search_fields = [
-                    '^id_pregunta',
-                    '^id_mol', 
-                    '^quiz', 
-                    '^seccion', 
-                    '^titulo_de_seccion', 
-                    '^numero', 
-                    '^tipo_de_pregunta', 
-                    '^pregunta',
-                    '^respuesta_correcta',
-                    '^respuesta_incorrecta_1',
-                    '^respuesta_incorrecta_2',
-                    '^respuesta_incorrecta_3',
-                    '^respuesta_incorrecta_4',
-                    '^explicacion_de_la_respueta_correcta',
-                    ]
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
-        
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-                
-        fields_list = fields.split(',')
-
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
-
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
-
-        response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
-
-        return Response(response_list)
-
-
-class SalonTablaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SalonTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = SalonTablaSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
-    filterset_fields = [
-                        'uuid_salon', 
-                        'id_monitor', 
-                        'cierre_definitivo', 
-                        'l3_22_23', 
-                        'l3_22_23_2', 
-                        'l3_22_23_au'
-                        ]
-    search_fields = [
-                    '^uuid_salon', 
-                    '^id_monitor', 
-                    '^cierre_definitivo', 
-                    '^l3_22_23', 
-                    '^l3_22_23_2', 
-                    '^l3_22_23_au'
-                    ]
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
-        
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-                
-        fields_list = fields.split(',')
-
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
-
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
-
-        response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
-
-        return Response(response_list)
-
-
-
-class MonitorTablaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = MonitorTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = MonitorTablaSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
-    filterset_fields = [
-                        'uuid_cole', 
-                        'uuid_mont', 
-                        'monitor', 
-                        'materia_feme', 
-                        'field_puntaje', 
-                        'whatsapp', 
-                        'email_m', 
-                        'id_thinki_mon', 
-                        'userToken'
-                        ]
-    search_fields = [
-                    '^uuid_cole', 
-                    '^uuid_mont', 
-                    '^monitor', 
-                    '^materia_feme', 
-                    '^field_puntaje', 
-                    '^whatsapp', 
-                    '^email_m', 
-                    '^id_thinki_mon', 
-                    '^userToken'
-                    ]
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
-        
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-                
-        fields_list = fields.split(',')
-
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
-
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
-
-        response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
-
-        return Response(response_list)
-
-
-class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
+class SalonKpiModuloViewSet(viewsets.ModelViewSet):
     queryset = SalonKpiModulo.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -456,7 +461,7 @@ class SalonKpiModuloViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(response_list)
 
 
-class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
+class EstatusViewSet(viewsets.ModelViewSet):
     queryset = Estatus.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -541,3 +546,90 @@ class EstatusViewSet(viewsets.ReadOnlyModelViewSet):
             response_list.append(item_dict)
 
         return Response(response_list)
+
+
+class MonitoreoViewSet(viewsets.ModelViewSet):
+    queryset = Monitoreo.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = MonitoreoSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = ['id_thinkific', 'id_thinki_mon', 'sign_in', 'sign_out', 'dia']
+    search_fields = ['^id_thinkific', '^id_thinki_mon', '^sign_in', '^sign_out', '^dia']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = FeedbackSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = ['id_thinkific', 'id_thinki_mon', 'feedback', 'errores']
+    search_fields = ['^id_thinkific', '^id_thinki_mon', '^feedback', '^errores']
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
