@@ -1,12 +1,15 @@
 import secrets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .models import MonitorTabla
 
 
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
 def actualizar_key(request, pk):
+    print(pk)
     try:
         monitor = MonitorTabla.objects.get(pk=pk)
     except MonitorTabla.DoesNotExist:
