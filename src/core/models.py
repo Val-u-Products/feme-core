@@ -141,6 +141,9 @@ class Monitoreo(models.Model):
     sign_out = models.TimeField(blank=True, null=True)
     dia = models.DateField(blank=True, null=True)
 
+    class Meta:
+        db_table = 'monitoreo'
+
 
 class Feedback(models.Model):
     id_thinkific = models.ForeignKey(EstudiantesTabla, null=True, blank=True, on_delete=models.CASCADE, db_column='id_thinkific')
@@ -148,28 +151,5 @@ class Feedback(models.Model):
     feedback = models.TextField(blank=True, null=True, db_column='feedback')
     errores = models.TextField(blank=True, null=True)
 
-
-class MonitorTablaBeta(models.Model):
-    uuid_cole = models.TextField(blank=True, null=True)
-    uuid_mont = models.TextField(primary_key=True, null=False, blank=True)
-    monitor = models.TextField(blank=True, null=True)  
-    materia_feme = models.TextField(blank=True, null=True)  
-    field_puntaje = models.FloatField(db_column='per_puntaje', blank=True, null=True)  
-    whatsapp = models.FloatField(blank=True, null=True)  
-    email_m = models.TextField(blank=True, null=True)  
-    id_thinki_mon = models.FloatField(blank=True, null=True)  
-
     class Meta:
-        db_table = 'monitor_tabla_beta'
-
-
-class SalonTablaBeta(models.Model):
-    uuid_salon = models.TextField(primary_key=True, null=False, blank=True)
-    id_monitor = models.ForeignKey(MonitorTablaBeta, on_delete=models.CASCADE, db_column='uuid_mont')
-    cierre_definitivo = models.TextField(db_column='Cierre definitivo', blank=True, null=True)  
-    l3_22_23 = models.TextField(db_column='l3-22-23', blank=True, null=True)  
-    l3_22_23_2 = models.TextField(db_column='l3-22-23_2', blank=True, null=True)  
-    l3_22_23_au = models.TextField(db_column='l3-22-23_au', blank=True, null=True)  
-
-    class Meta:
-        db_table = 'salon_tabla_beta'
+        db_table = 'feedback'
