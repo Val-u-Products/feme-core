@@ -6,7 +6,7 @@ class ColeTabla(models.Model):
     colegio = models.TextField(blank=True, null=True)
     ubicacion = models.TextField(blank=True, null=True)
     zona_horaria = models.TextField(blank=True, null=True)
-    sexo_colegio = models.TextField(blank=True, null=True, db_column='sexo-colegio')
+    sexo_colegio = models.TextField(blank=True, null=True, db_column='sexo_colegio')
     zoho_link = models.TextField(blank=True, null=True, db_column='zoho_link_')
 
     class Meta:
@@ -28,8 +28,8 @@ class QuizTabla(models.Model):
     quiz = models.IntegerField(blank=True, null=True)
     seccion = models.IntegerField(blank=True, null=True)
     titulo_de_seccion = models.TextField(blank=True, null=True)
-    numero = models.IntegerField(blank=True, null=True)
-    tipo_de_pregunta = models.TextField(blank=True, null=True)
+    # numero = models.IntegerField(blank=True, null=True)
+    # tipo_de_pregunta = models.TextField(blank=True, null=True)
     pregunta = models.TextField(blank=True, null=True)
     respuesta_correcta = models.TextField(blank=True, null=True)
     respuesta_incorrecta_1 = models.TextField(blank=True, null=True)
@@ -83,10 +83,10 @@ class EstudiantesTabla(models.Model):
 class SalonTabla(models.Model):
     uuid_salon = models.TextField(primary_key=True, null=False, blank=True)
     id_monitor = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='uuid_mont')
-    cierre_definitivo = models.DateField(db_column='Cierre definitivo', blank=True, null=True)  
-    l3_22_23 = models.TextField(db_column='l3-22-23', blank=True, null=True)  
-    l3_22_23_2 = models.TextField(db_column='l3-22-23_2', blank=True, null=True)  
-    l3_22_23_au = models.TextField(db_column='l3-22-23_au', blank=True, null=True)  
+    cierre_definitivo = models.DateField(db_column='cierre_definitivo', blank=True, null=True)  
+    l3_22_23 = models.TextField(db_column='l3_22_23', blank=True, null=True)  
+    l3_22_23_2 = models.TextField(db_column='l3_22_23_2', blank=True, null=True)  
+    l3_22_23_au = models.TextField(db_column='l3_22_23_au', blank=True, null=True)  
 
     class Meta:
         db_table = 'salon_tabla'
@@ -98,8 +98,8 @@ class SalonKpiModulo(models.Model):
     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
     grado = models.TextField(blank=True, null=True)
     seccion = models.TextField(blank=True, null=True)
-    modulos = models.TextField(blank=True, null=True) 
-    total_estudiantes = models.IntegerField(blank=True, null=True)
+    modulo = models.TextField(blank=True, null=True) 
+    total_estudiantes = models.IntegerField(blank=True, null=True, db_column='total_estudiantes')
     iniciaron = models.IntegerField(blank=True, null=True)
     llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_50')
     completaron = models.IntegerField(blank=True, null=True)
