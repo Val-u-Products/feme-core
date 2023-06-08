@@ -28,8 +28,6 @@ class QuizTabla(models.Model):
     quiz = models.IntegerField(blank=True, null=True)
     seccion = models.IntegerField(blank=True, null=True)
     titulo_de_seccion = models.TextField(blank=True, null=True)
-    # numero = models.IntegerField(blank=True, null=True)
-    # tipo_de_pregunta = models.TextField(blank=True, null=True)
     pregunta = models.TextField(blank=True, null=True)
     respuesta_correcta = models.TextField(blank=True, null=True)
     respuesta_incorrecta_1 = models.TextField(blank=True, null=True)
@@ -140,7 +138,7 @@ class Estatus(models.Model):
 
 class Monitoreo(models.Model):
     id_m = models.IntegerField(primary_key=True, unique=True)
-    id_thinki_mon = models.ForeignKey(MonitorTabla, null=True, blank=True, on_delete=models.CASCADE, db_column='id_thinki_mon')
+    id_thinki_mon = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='id_thinki_mon')
     tiempo_sesion = models.IntegerField(blank=True, null=True)
     sign_in = models.TimeField(blank=True, null=True)
     sign_out = models.TimeField(blank=True, null=True)
@@ -152,7 +150,7 @@ class Monitoreo(models.Model):
 
 class Feedback(models.Model):
     id_f = models.IntegerField(primary_key=True)
-    id_thinki_mon = models.ForeignKey(MonitorTabla, null=True, blank=True, on_delete=models.CASCADE, db_column='id_thinki_mon')
+    id_thinki_mon = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='id_thinki_mon')
     feedback = models.TextField(blank=True, null=True, db_column='feedback')
     errores = models.TextField(blank=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)

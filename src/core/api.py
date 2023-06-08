@@ -137,13 +137,12 @@ class QuizTablaViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
+                        'id_q',
                         'id_pregunta',
                         'id_mol', 
                         'quiz', 
                         'seccion', 
                         'titulo_de_seccion', 
-                        'numero', 
-                        'tipo_de_pregunta', 
                         'pregunta',
                         'respuesta_correcta',
                         'respuesta_incorrecta_1',
@@ -153,13 +152,12 @@ class QuizTablaViewSet(viewsets.ModelViewSet):
                         'explicacion_de_la_respueta_correcta',
                         ]
     search_fields = [
+                    '^id_q',
                     '^id_pregunta',
                     '^id_mol', 
                     '^quiz', 
                     '^seccion', 
                     '^titulo_de_seccion', 
-                    '^numero', 
-                    '^tipo_de_pregunta', 
                     '^pregunta',
                     '^respuesta_correcta',
                     '^respuesta_incorrecta_1',
@@ -343,7 +341,7 @@ class EstudiantesTablaViewSet(viewsets.ModelViewSet):
                         'whatsapp_estudiante',
                         'nombres_representante',
                         'apellidos_representante',
-                        'whatsapp_responsable',
+                        'whatsapp_representante',
                         'email_representante',
                         'inscrito',
                         ]
@@ -361,7 +359,7 @@ class EstudiantesTablaViewSet(viewsets.ModelViewSet):
                     '^whatsapp_estudiante',
                     '^nombres_representante',
                     '^apellidos_representante',
-                    '^whatsapp_responsable',
+                    '^whatsapp_representante',
                     '^email_representante',
                     '^inscrito',
                     ]
@@ -406,24 +404,28 @@ class SalonKpiModuloViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
     filterset_fields = [
-                        'uuid_salon', 
+                        'id_skm',
+                        'uuid_salon',
                         'id_mol', 
                         'grado', 
                         'seccion', 
-                        'modulos', 
+                        'modulo', 
                         'total_estudiantes', 
-                        'iniciaron', 'llevan50', 
+                        'iniciaron', 
+                        'llevan50', 
                         'completaron', 
                         'created_at'
                         ]
     search_fields = [
-                    '^uuid_salon', 
+                    '^id_skm',
+                    '^uuid_salon',
                     '^id_mol', 
                     '^grado', 
                     '^seccion', 
-                    '^modulos', 
+                    '^modulo', 
                     '^total_estudiantes', 
-                    '^iniciaron', 'llevan50', 
+                    '^iniciaron', 
+                    '^llevan50', 
                     '^completaron', 
                     '^created_at'
                     ]
@@ -555,8 +557,8 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
     serializer_class = MonitoreoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
-    filterset_fields = ['id_thinkific', 'id_thinki_mon', 'sign_in', 'sign_out', 'dia']
-    search_fields = ['^id_thinkific', '^id_thinki_mon', '^sign_in', '^sign_out', '^dia']
+    filterset_fields = ['id_m', 'id_thinki_mon', 'tiempo_sesion', 'sign_in', 'sign_out','dia']
+    search_fields = ['^id_m', '^id_thinki_mon', '^tiempo_sesion', '^sign_in', '^sign_out','^dia']
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -598,8 +600,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     serializer_class = FeedbackSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
-    filterset_fields = ['id_thinkific', 'id_thinki_mon', 'feedback', 'errores']
-    search_fields = ['^id_thinkific', '^id_thinki_mon', '^feedback', '^errores']
+    filterset_fields = ['id_f', 'id_thinki_mon', 'feedback', 'errores', 'fecha']
+    search_fields = ['^id_f', '^id_thinki_mon', '^feedback', '^errores', '^fecha']
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
