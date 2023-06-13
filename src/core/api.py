@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import SessionAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.response import Response
@@ -31,7 +32,7 @@ from .serializers import (ColeTablaSerializer,
 
 class ColeTablaViewSet(viewsets.ModelViewSet):
     queryset = ColeTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ColeTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -88,7 +89,7 @@ class ColeTablaViewSet(viewsets.ModelViewSet):
 
 class ModulosViewSet(viewsets.ModelViewSet):
     queryset = Modulos.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ModulosSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -131,7 +132,7 @@ class ModulosViewSet(viewsets.ModelViewSet):
 
 class QuizTablaViewSet(viewsets.ModelViewSet):
     queryset = QuizTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = QuizTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -202,7 +203,7 @@ class QuizTablaViewSet(viewsets.ModelViewSet):
 
 class SalonTablaViewSet(viewsets.ModelViewSet):
     queryset = SalonTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SalonTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -259,7 +260,7 @@ class SalonTablaViewSet(viewsets.ModelViewSet):
 
 class MonitorTablaViewSet(viewsets.ModelViewSet):
     queryset = MonitorTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MonitorTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -322,7 +323,7 @@ class MonitorTablaViewSet(viewsets.ModelViewSet):
 
 class EstudiantesTablaViewSet(viewsets.ModelViewSet):
     queryset = EstudiantesTabla.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = EstudiantesTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -398,7 +399,7 @@ class EstudiantesTablaViewSet(viewsets.ModelViewSet):
 
 class SalonKpiModuloViewSet(viewsets.ModelViewSet):
     queryset = SalonKpiModulo.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = SalonKpiModuloSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -465,7 +466,7 @@ class SalonKpiModuloViewSet(viewsets.ModelViewSet):
 
 class EstatusViewSet(viewsets.ModelViewSet):
     queryset = Estatus.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = EstatusSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -552,7 +553,7 @@ class EstatusViewSet(viewsets.ModelViewSet):
 
 class MonitoreoViewSet(viewsets.ModelViewSet):
     queryset = Monitoreo.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MonitoreoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -595,7 +596,7 @@ class MonitoreoViewSet(viewsets.ModelViewSet):
 
 class FeedbackViewSet(viewsets.ModelViewSet):
     queryset = Feedback.objects.all()
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = FeedbackSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
