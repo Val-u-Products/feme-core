@@ -43,7 +43,7 @@ class QuizTabla(models.Model):
 class MonitorTabla(models.Model):
     uuid_cole = models.ForeignKey(ColeTabla, on_delete=models.CASCADE, db_column='uuid_cole')
     uuid_mont = models.TextField(primary_key=True, null=False, blank=True, db_column='uuid_mont')
-    monitor = models.TextField(blank=True, null=True)  
+    monitor = models.TextField(blank=True, null=True)
     materia_feme = models.TextField(blank=True, null=True)  
     field_puntaje = models.FloatField(blank=True, null=True, db_column='per_puntaje')  
     whatsapp = models.IntegerField(blank=True, null=True)
@@ -51,6 +51,7 @@ class MonitorTabla(models.Model):
     email_m = models.TextField(blank=True, null=True)  
     id_thinki_mon = models.FloatField(blank=True, null=True)
     userToken = models.CharField(max_length=100, unique=True, blank=True, null=True, db_column='userToken')
+    apellidos = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'monitor_tabla'
@@ -157,3 +158,33 @@ class Feedback(models.Model):
 
     class Meta:
         db_table = 'feedback'
+
+
+class EstudiantesConPromedioYModulos(models.Model):
+    nombres_estudiantes = models.CharField(max_length=255)
+    apellidos_estudiantes = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=36)
+    id_thinkific = models.IntegerField(primary_key=True)
+    nota_promedio = models.IntegerField()
+    modulos_completados = models.IntegerField()
+    ranking = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'vista_estudiantes_con_promedio_y_modulos'
+
+
+class EstudiantesRankingPorModulos(models.Model):
+    nombres_estudiantes = models.CharField(max_length=255)
+    apellidos_estudiantes = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=36)
+    uuid_mont = models.CharField(max_length=40)
+    id_thinkific = models.IntegerField(primary_key=True)
+    modulo = models.CharField(max_length=255)
+    nota_total = models.IntegerField()
+    id_modulo = models.IntegerField()
+    ranking = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'modulos_ranking_estudiantes'

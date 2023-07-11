@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +15,9 @@ from .models import (ColeTabla,
                      SalonKpiModulo,
                      Estatus,
                      Monitoreo,
-                     Feedback
+                     Feedback,
+                     EstudiantesConPromedioYModulos,
+                     EstudiantesRankingPorModulos
                      )
 from .serializers import (ColeTablaSerializer, 
                           EstudiantesTablaSerializer, 
@@ -26,14 +28,16 @@ from .serializers import (ColeTablaSerializer,
                           SalonKpiModuloSerializer,
                           EstatusSerializer,
                           MonitoreoSerializer,
-                          FeedbackSerializer
+                          FeedbackSerializer,
+                          EstudiantesConPromedioYModulosSerializer,
+                          EstudiantesRankingPorModulosSerializer
                           )
 
 
 class ColeTablaViewSet(viewsets.ModelViewSet):
     queryset = ColeTabla.objects.all()
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = ColeTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -260,8 +264,8 @@ class SalonTablaViewSet(viewsets.ModelViewSet):
 
 class MonitorTablaViewSet(viewsets.ModelViewSet):
     queryset = MonitorTabla.objects.all()
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = MonitorTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -323,8 +327,8 @@ class MonitorTablaViewSet(viewsets.ModelViewSet):
 
 class EstudiantesTablaViewSet(viewsets.ModelViewSet):
     queryset = EstudiantesTabla.objects.all()
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = EstudiantesTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -399,8 +403,9 @@ class EstudiantesTablaViewSet(viewsets.ModelViewSet):
 
 class SalonKpiModuloViewSet(viewsets.ModelViewSet):
     queryset = SalonKpiModulo.objects.all()
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     serializer_class = SalonKpiModuloSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -434,6 +439,7 @@ class SalonKpiModuloViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         fields = request.query_params.get('fields', None)
+        orden = request.GET.get('orden', 'descendente')
         
         if fields is None:
             serializer = self.get_serializer(queryset, many=True)
@@ -466,8 +472,8 @@ class SalonKpiModuloViewSet(viewsets.ModelViewSet):
 
 class EstatusViewSet(viewsets.ModelViewSet):
     queryset = Estatus.objects.all()
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
     serializer_class = EstatusSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -604,6 +610,128 @@ class FeedbackViewSet(viewsets.ModelViewSet):
     filterset_fields = ['id_f', 'id_thinki_mon', 'feedback', 'errores', 'fecha']
     search_fields = ['^id_f', '^id_thinki_mon', '^feedback', '^errores', '^fecha']
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+class EstudiantesConPromedioYModulosViewSet(viewsets.ModelViewSet):
+    queryset = EstudiantesConPromedioYModulos.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = EstudiantesConPromedioYModulosSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = [
+                        'nombres_estudiantes',
+                        'apellidos_estudiantes',
+                        'uuid_salon', 
+                        'id_thinkific', 
+                        'nota_promedio', 
+                        'modulos_completados',
+                        'ranking'
+                        ]
+    search_fields = [
+                    '^nombres_estudiantes',
+                    '^apellidos_estudiantes',
+                    '^uuid_salon', 
+                    '^id_thinkific', 
+                    '^nota_promedio', 
+                    '^modulos_completados',
+                    '^ranking'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+class EstudiantesRankingPorModulosViewSet(viewsets.ModelViewSet):
+    queryset = EstudiantesRankingPorModulos.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = EstudiantesRankingPorModulosSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get', 'post', 'patch']
+    filterset_fields = [
+                        'nombres_estudiantes',
+                        'apellidos_estudiantes',
+                        'uuid_salon',
+                        'modulo',
+                        'id_thinkific', 
+                        'nota_total', 
+                        'id_modulo',
+                        'ranking'
+                        ]
+    search_fields = [
+                    '^nombres_estudiantes',
+                    '^apellidos_estudiantes',
+                    '^uuid_salon',
+                    '^modulo',
+                    '^id_thinkific', 
+                    '^nota_total', 
+                    '^id_modulo',
+                    '^ranking'
+                    ]
+    
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         fields = request.query_params.get('fields', None)

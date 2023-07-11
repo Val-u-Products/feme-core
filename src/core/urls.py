@@ -8,7 +8,9 @@ from .api import (ColeTablaViewSet,
                   SalonKpiModuloViewSet,
                   EstatusViewSet,
                   MonitoreoViewSet,
-                  FeedbackViewSet
+                  FeedbackViewSet,
+                  EstudiantesConPromedioYModulosViewSet,
+                  EstudiantesRankingPorModulosViewSet
                   )
 
 
@@ -24,5 +26,7 @@ router.register('salonkpimodulo', SalonKpiModuloViewSet, 'salon_kpi_modulo')
 router.register('estatus', EstatusViewSet, 'estatus')
 router.register('monitoreo', MonitoreoViewSet, 'monitoreo')
 router.register('feedback', FeedbackViewSet, 'feedback')
+router.register('estudiantesconpromedio', EstudiantesConPromedioYModulosViewSet, 'estudiantesconpromedio')
+router.register('estudiantesrankingmodulos', EstudiantesRankingPorModulosViewSet, 'estudiantesrankingmodulos')
 
 urlpatterns = router.urls
