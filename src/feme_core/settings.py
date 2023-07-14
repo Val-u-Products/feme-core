@@ -82,10 +82,10 @@ WSGI_APPLICATION = 'feme_core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'valu_test',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '48349632',
-        'HOST': 'localhost',
+        'PASSWORD': 'val-uDevops12345#',
+        'HOST': '34.95.210.51',
         'PORT': '5432',
     }
 }

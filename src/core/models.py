@@ -1,190 +1,197 @@
 from django.db import models
+from django.utils import timezone
 
 
-class ColeTabla(models.Model):
-    uuid_cole = models.TextField(primary_key=True, blank=True, null=False, db_column='uuid_cole')
-    colegio = models.TextField(blank=True, null=True)
-    ubicacion = models.TextField(blank=True, null=True)
-    zona_horaria = models.TextField(blank=True, null=True)
-    sexo_colegio = models.TextField(blank=True, null=True, db_column='sexo_colegio')
-    zoho_link = models.TextField(blank=True, null=True, db_column='zoho_link_')
+class ColegioTabla(models.Model):
+    uuid_cole = models.CharField(primary_key=True, unique=True, max_length=255)
+    colegio = models.CharField(max_length=255)
+    ubicacion = models.CharField(max_length=255)
+    zona_horaria = models.CharField(max_length=255)
+    sexo_colegio = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'colegio_tabla'
 
 
-class Modulos(models.Model):
-    id_mol = models.TextField(primary_key=True, null=False, blank=True, db_column='id_mol')
-    nombre = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'modulos'
-
-
-class QuizTabla(models.Model):
-    id_q = models.IntegerField(primary_key=True, unique=True, db_column='id_q')
-    id_pregunta = models.TextField(blank=True, null=True, db_column='id_pregunta')
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    quiz = models.IntegerField(blank=True, null=True)
-    seccion = models.IntegerField(blank=True, null=True)
-    titulo_de_seccion = models.TextField(blank=True, null=True)
-    pregunta = models.TextField(blank=True, null=True)
-    respuesta_correcta = models.TextField(blank=True, null=True)
-    respuesta_incorrecta_1 = models.TextField(blank=True, null=True)
-    respuesta_incorrecta_2 = models.TextField(blank=True, null=True)
-    respuesta_incorrecta_3 = models.TextField(blank=True, null=True)
-    respuesta_incorrecta_4 = models.TextField(blank=True, null=True)
-    explicacion_de_la_respueta_correcta = models.TextField(blank=True, null=True, db_column='explicacion_correcta')
-
-    class Meta:
-        db_table = 'quiz_tabla'
-
-
-class MonitorTabla(models.Model):
-    uuid_cole = models.ForeignKey(ColeTabla, on_delete=models.CASCADE, db_column='uuid_cole')
-    uuid_mont = models.TextField(primary_key=True, null=False, blank=True, db_column='uuid_mont')
-    monitor = models.TextField(blank=True, null=True)
-    materia_feme = models.TextField(blank=True, null=True)  
-    field_puntaje = models.FloatField(blank=True, null=True, db_column='per_puntaje')  
-    whatsapp = models.IntegerField(blank=True, null=True)
-    age = models.IntegerField(blank=True, null=True)
-    email_m = models.TextField(blank=True, null=True)  
-    id_thinki_mon = models.FloatField(blank=True, null=True)
-    userToken = models.CharField(max_length=100, unique=True, blank=True, null=True, db_column='userToken')
-    apellidos = models.CharField(max_length=255, null=True, blank=True)
-
-    class Meta:
-        db_table = 'monitor_tabla'
-
-
-class EstudiantesTabla(models.Model):
-    id_thinkific = models.IntegerField(primary_key=True, blank=True, db_column='id_thinkific')
-    uuid_mont = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='uuid_mont')
-    uuid_cole = models.ForeignKey(ColeTabla, on_delete=models.CASCADE, db_column='uuid_cole')
-    uuid_salon = models.TextField(blank=True, null=True)
-    colegio = models.TextField(blank=True, null=True)
-    grado = models.TextField(blank=True, null=True)
-    seccion = models.TextField(blank=True, null=True)
-    nombres_estudiantes = models.TextField(blank=True, null=True)
-    apellidos_estudiantes = models.TextField(blank=True, null=True)
-    email = models.TextField(blank=True, null=True)
-    whatsapp_estudiante = models.IntegerField(blank=True, null=True)
-    nombres_representante = models.TextField(blank=True, null=True)
-    apellidos_representante = models.TextField(blank=True, null=True)
-    whatsapp_representante = models.IntegerField(blank=True, null=True)
-    email_representante = models.TextField(blank=True, null=True)
-    inscrito = models.CharField(blank=True, null=True, max_length=255)
-
-    class Meta:
-        db_table = 'estudiantes'
-
-
 class SalonTabla(models.Model):
-    uuid_salon = models.TextField(primary_key=True, null=False, blank=True)
-    id_monitor = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='uuid_mont')
-    cierre_definitivo = models.DateField(db_column='cierre_definitivo', blank=True, null=True)  
-    l3_22_23 = models.TextField(db_column='l3_22_23', blank=True, null=True)  
-    l3_22_23_2 = models.TextField(db_column='l3_22_23_2', blank=True, null=True)  
-    l3_22_23_au = models.TextField(db_column='l3_22_23_au', blank=True, null=True)  
+    uuid_salon = models.CharField(primary_key=True, unique=True, max_length=255)
+    cierre_definitivo = models.DateTimeField(default=timezone.now, null=True)
+    per_puntaje = models.IntegerField(null=True)
+    materia_feme = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'salon_tabla'
 
 
-class SalonKpiModulo(models.Model):
-    id_skm = models.IntegerField(primary_key=True, unique=True, db_column='id_skm')
+class Rol(models.Model):
+    rol = models.CharField(primary_key=True, unique=True, max_length=255)
+    nombre = models.CharField(max_length=255)
+    permisos = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'rol'
+
+
+class Usuarios(models.Model):
+    id_v = models.IntegerField(primary_key=True, unique=True)
+    uuid_cole = models.ForeignKey(ColegioTabla, on_delete=models.CASCADE, db_column='uuid_cole')
     uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
+    rol = models.ForeignKey(Rol, on_delete=models.CASCADE, db_column='rol')
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    whatsapp = models.IntegerField(null=True)
+    email = models.CharField(max_length=255)
+    inscrito = models.CharField(max_length=2)
+
+    class Meta:
+        db_table = 'user'
+
+
+class ValuThinkific(models.Model):
+    id_thinkific = models.IntegerField(primary_key=True, unique=True)
+    id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+
+    class Meta:
+        db_table = 'valu_thinkific'
+
+
+class EstatusThinkific(models.Model):
+    id_t = models.IntegerField(primary_key=True, unique=True)
+    id_thinkific = models.ForeignKey(ValuThinkific, on_delete=models.CASCADE, db_column='id_thinkific')
+    modulo = models.CharField(max_length=255)
+    started_at = models.DateTimeField(default=timezone.now, null=True)
+    activated_at = models.DateTimeField(default=timezone.now, null=True)
+    expirated_at = models.DateTimeField(default=timezone.now, null=True)
+    completed_at = models.DateTimeField(default=timezone.now, null=True)
+    per_completacion = models.IntegerField()
+    per_videos = models.IntegerField()
+    estatus = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now)
+    last_sign_in = models.DateTimeField(default=timezone.now, null=True)
+    nota_quiz1 = models.FloatField(null=True)
+    nota_quiz2 = models.FloatField(null=True)
+    nota_quiz3 = models.FloatField(null=True)
+    fecha_q1 = models.DateTimeField(default=timezone.now, null=True)
+    fecha_q2 = models.DateTimeField(default=timezone.now, null=True)
+    fecha_q3 = models.DateTimeField(default=timezone.now, null=True)
+    nota_quizes = models.FloatField()
+    nota_progreso = models.FloatField()
+    nota_total = models.IntegerField()
+    nota_total_l = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'estatus_thinkific'
+
+
+class EstatusValu(models.Model):
+    id_ev = models.IntegerField(primary_key=True, unique=True)
+    id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+    modulo = models.CharField(max_length=255)
+    started_at = models.DateTimeField(default=timezone.now)
+    activated_at = models.DateTimeField(default=timezone.now)
+    expirated_at = models.DateTimeField(default=timezone.now)
+    completed_at = models.DateTimeField(default=timezone.now, null=True)
+    per_completacion = models.IntegerField()
+    per_videos = models.IntegerField()
+    estatus = models.CharField(max_length=255)
+    created_at = models.DateTimeField()
+    last_sign_in = models.DateTimeField(default=timezone.now)
+    nota_quiz1 = models.FloatField()
+    intento_quiz1 = models.IntegerField(null=True)
+    nota_quiz2 = models.FloatField()
+    intento_quiz2 = models.IntegerField(null=True)
+    nota_quiz3 = models.FloatField()
+    intento_quiz3 = models.IntegerField(null=True)
+    fecha_q1 = models.DateTimeField(default=timezone.now, null=True)
+    fecha_q2 = models.DateTimeField(default=timezone.now, null=True)
+    fecha_q3 = models.DateTimeField(default=timezone.now, null=True)
+    nota_total = models.IntegerField()
+    nota_total_l = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'estatus_valu'
+
+
+class Modulos(models.Model):
+    id_mol = models.CharField(primary_key=True, unique=True)
+    nombre = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'modulos'
+
+
+class ContenidosColegio(models.Model):
+    id_c = models.IntegerField(primary_key=True, unique=True)
+    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
+    lapso = models.CharField(max_length=255)
     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    grado = models.TextField(blank=True, null=True)
-    seccion = models.TextField(blank=True, null=True)
-    modulo = models.TextField(blank=True, null=True) 
-    total_estudiantes = models.IntegerField(blank=True, null=True, db_column='total_estudiantes')
-    iniciaron = models.IntegerField(blank=True, null=True)
-    llevan50 = models.IntegerField(blank=True, null=True, db_column='llevan_50')
-    completaron = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField()
 
     class Meta:
-        db_table = 'salon_kpi_modulo'
+        db_table = 'contenidos_colegio'
 
 
-class Estatus(models.Model):
-    id_s = models.IntegerField(primary_key=True, unique=True, db_column='id_s')
-    id_thinkific = models.ForeignKey(EstudiantesTabla, on_delete=models.CASCADE, db_column='id_thinkific')
-    modulo = models.TextField(blank=True, null=True)
-    email = models.TextField(blank=True, null=True, db_column='email')
-    started_at = models.DateTimeField(blank=True, null=True)
-    activated_at = models.DateTimeField(blank=True, null=True)
-    expirated_at = models.DateTimeField(blank=True, null=True)
-    completed_at = models.DateTimeField(blank=True, null=True)
-    per_completation = models.IntegerField(blank=True, null=True)
-    per_videos = models.IntegerField(blank=True, null=True)
-    estatus = models.TextField(blank=True, null=True, db_column='estatus')
-    created_at = models.DateTimeField()
-    last_sign_in = models.DateTimeField(blank=True, null=True)
-    nota_quiz1 = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    nota_quiz2 = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    nota_quiz3 = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    fecha_q1 = models.DateTimeField(blank=True, null=True)
-    fecha_q2 = models.DateTimeField(blank=True, null=True)
-    fecha_q3 = models.DateTimeField(blank=True, null=True)
-    nota_quizes = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    nota_progreso = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    nota_total = models.IntegerField(blank=True, null=True)
-    nota_total_l = models.TextField(blank=True, null=True, db_column='nota_total_l')
+class ModuloContenido(models.Model):
+    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+    id_cont = models.CharField(primary_key=True, unique=True, max_length=255)
+    orden = models.IntegerField()
+    contenido = models.CharField(max_length=255)
+    semana_recom = models.IntegerField()
+    tipo = models.IntegerField()
 
     class Meta:
-        db_table = 'estatus'
+        db_table = 'modulo_contenido'
 
 
-class Monitoreo(models.Model):
-    id_m = models.IntegerField(primary_key=True, unique=True)
-    id_thinki_mon = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='id_thinki_mon')
-    tiempo_sesion = models.IntegerField(blank=True, null=True)
-    sign_in = models.TimeField(blank=True, null=True)
-    sign_out = models.TimeField(blank=True, null=True)
-    dia = models.DateField(blank=True, null=True)
+class QuizTabla(models.Model):
+    id_q = models.IntegerField(primary_key=True, unique=True)
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont')
+    id_pregunta = models.CharField(max_length=255)
+    quiz = models.IntegerField()
+    seccion = models.IntegerField()
+    titulo_de_seccion = models.CharField(max_length=255)
+    pregunta = models.CharField(max_length=255)
+    respuesta_correcta = models.CharField(max_length=255)
+    respuesta_incorrecta_1 = models.CharField(max_length=255)
+    respuesta_incorrecta_2 = models.CharField(max_length=255)
+    respuesta_incorrecta_3 = models.CharField(max_length=255)
+    respuesta_incorrecta_4 = models.CharField(max_length=255)
+    explicacion_correcta = models.CharField(max_length=255)
 
     class Meta:
-        db_table = 'monitoreo'
+        db_table = 'quiz_tabla'
 
 
 class Feedback(models.Model):
-    id_f = models.IntegerField(primary_key=True)
-    id_thinki_mon = models.ForeignKey(MonitorTabla, on_delete=models.CASCADE, db_column='id_thinki_mon')
-    feedback = models.TextField(blank=True, null=True, db_column='feedback')
-    errores = models.TextField(blank=True, null=True)
-    fecha = models.DateTimeField(blank=True, null=True)
+    id_f = models.IntegerField(primary_key=True, unique=True)
+    id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+    feedback = models.CharField(max_length=255)
+    errores = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'feedback'
 
 
-class EstudiantesConPromedioYModulos(models.Model):
-    nombres_estudiantes = models.CharField(max_length=255)
-    apellidos_estudiantes = models.CharField(max_length=255)
-    uuid_salon = models.CharField(max_length=36)
-    id_thinkific = models.IntegerField(primary_key=True)
-    nota_promedio = models.IntegerField()
-    modulos_completados = models.IntegerField()
-    ranking = models.IntegerField()
+class Monitoreo(models.Model):
+    id_m = models.IntegerField(primary_key=True, unique=True)
+    id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+    tiempo_sesion = models.IntegerField()
+    sign_out = models.DateTimeField()
+    sign_in = models.DateTimeField()
+    dia = models.DateField()
 
     class Meta:
-        managed = False
-        db_table = 'vista_estudiantes_con_promedio_y_modulos'
+        db_table = 'monitoreo'
 
 
-class EstudiantesRankingPorModulos(models.Model):
-    nombres_estudiantes = models.CharField(max_length=255)
-    apellidos_estudiantes = models.CharField(max_length=255)
-    uuid_salon = models.CharField(max_length=36)
-    uuid_mont = models.CharField(max_length=40)
-    id_thinkific = models.IntegerField(primary_key=True)
-    modulo = models.CharField(max_length=255)
-    nota_total = models.IntegerField()
-    id_modulo = models.IntegerField()
-    ranking = models.IntegerField()
+class Jerarquium(models.Model):
+    id_j = models.IntegerField(primary_key=True, unique=True)
+    id_estudiante = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+    id_coordinador = models.IntegerField(null=True)
+    id_profe = models.IntegerField(null=True)
+    id_representante = models.IntegerField(null=True)
 
     class Meta:
-        managed = False
-        db_table = 'modulos_ranking_estudiantes'
+        db_table = 'jerarquia'
