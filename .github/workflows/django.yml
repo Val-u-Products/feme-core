@@ -3,7 +3,7 @@ name: Deploy to GCP Compute Engine
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   deploy:
