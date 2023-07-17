@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-6%jd$8(ft)=1v31k))pix*&+4us*1a(^a@hxqih!5-+d8q!=db
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.229.122.241', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'rest_framework',
+    'django_filters',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -76,16 +78,28 @@ WSGI_APPLICATION = 'feme_core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'X31AveWXXKoAxOGBOAgH',
-        'HOST': 'val-u-data.chno4t1xw66s.sa-east-1.rds.amazonaws.com',
+        'PASSWORD': 'val-uDevops12345#',
+        'HOST': '34.95.240.188',
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'valu_test_local',
+#         'USER': 'postgres',
+#         'PASSWORD': '48349632',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
@@ -129,14 +143,20 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     )
+# }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=3650),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=3650),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+# }
+
+# AUTHENTICATION_BACKENDS = ['core.backends.EmailBackend']
+
+# Custom user model
+AUTH_USER_MODEL = "authentication.CustomUser"
