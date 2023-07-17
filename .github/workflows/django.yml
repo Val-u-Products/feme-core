@@ -29,5 +29,4 @@ jobs:
       
       - name: Deploy to Compute Engine
         run: |
-          gcloud compute scp --recurse django-vm-vm --zone southamerica-east1-a
-#         gcloud compute instances update django-vm-vm --zone southamerica-east1-a --source .
+          gcloud compute instances update django-vm-vm --zone southamerica-east1-a
