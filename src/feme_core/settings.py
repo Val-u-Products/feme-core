@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'val-uDevops12345#',
-        'HOST': '34.95.210.51',
+        'HOST': '34.95.240.188',
         'PORT': '5432',
     }
 }
@@ -93,10 +93,10 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'postgres',
+#         'NAME': 'valu_test_local',
 #         'USER': 'postgres',
-#         'PASSWORD': 'Val-udevops12345#',
-#         'HOST': '34.95.240.188',
+#         'PASSWORD': '48349632',
+#         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }
 # }
