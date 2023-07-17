@@ -39,5 +39,3 @@ jobs:
         run: |
           gcloud compute scp --recurse . django-vm-vm --zone southamerica-east1-a
 #         gcloud compute instances update django-vm-vm --zone southamerica-east1-a --source .
-
-
