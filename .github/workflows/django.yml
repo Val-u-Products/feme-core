@@ -12,14 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "$GCP_SSH_KEY" > ~/.ssh/google_compute_engine
-          echo "$GCP_PUBLIC_SSH_KEY" > ~/.ssh/google_compute_engine.pub
-          chmod 600 ~/.ssh/google_compute_engine
-          chmod 600 ~/.ssh/google_compute_engine.pub
-          
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
