@@ -11,7 +11,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+        
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$GCP_SSH_KEY" > ~/.ssh/google_compute_engine
+          echo "$GCP_PUBLIC_SSH_KEY" > ~/.ssh/google_compute_engine.pub
+          chmod 600 ~/.ssh/google_compute_engine
+          chmod 600 ~/.ssh/google_compute_engine.pub
+          
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -25,7 +33,7 @@ jobs:
         with:
           version: 'latest'
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SSH_KEY }}
+          service_account_key: ${{ secrets.GCLOUD_SERVICE_ACCOUNT }}
       
       - name: Deploy to Compute Engine
         run: |
