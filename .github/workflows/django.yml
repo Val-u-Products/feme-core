@@ -1,39 +1,33 @@
-name: Django CI
+name: Deploy to GCP Compute Engine
 
 on:
   push:
-    branches: 
-    - "dev"
-  pull_request:
-    branches: 
-    - "dev"
+    branches:
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8, 3.9]
-
+    
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Dependencies
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Set up GCP CLI
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          version: 'latest'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SSH_KEY }}
+      
+      - name: Deploy to Compute Engine
         run: |
-          python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run Tests
-        run: |
-          cd src/
-          python3 manage.py test
-      - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.GCP_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+          gcloud compute instances update django-vm-vm --zone southamerica-east1-a --source .
