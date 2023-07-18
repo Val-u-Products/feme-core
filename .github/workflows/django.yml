@@ -1,1 +1,31 @@
+name: Cloud Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.5.0
+        with:
+          version: 'latest'
+          project_id: ${{ secrets.PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Luis Valencia"
+          git config --global user.email "luis@myval-u.com"
+
+      - name: Build and Deploy
+        run: |
+          gcloud app deploy --quiet
 
