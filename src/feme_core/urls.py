@@ -16,16 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from core.views import actualizar_key
+# from core.views import actualizar_key
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework import routers # new line
+router = routers.DefaultRouter() # new line
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('login/', LoginView.as_view(), name="login"),
+    # path('logout/', logout_view, name="logout"),
+    # path('register/', UserRegistration.as_view(), name='user_registration'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('monitortabla/<uuid:pk>/actualizar_key/', actualizar_key, name='actualizar_key'),
-    path('', include('core.urls'))
+    # path('monitortabla/<int:pk>/actualizar_key/', actualizar_key, name='actualizar_key'),
+    path('', include('core.urls')),
+    path('api/', include('authentication.urls')), # new line
+    path('api/', include(router.urls)), # new line
 ]
