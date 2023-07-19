@@ -12,19 +12,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import environ
+# import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env()
+# env = environ.Env()
+# environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = 'django-insecure-6%jd$8(ft)=1v31k))pix*&+4us*1a(^a@hxqih!5-+d8q!=db'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'feme_core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DATABASE_NAME'),
-        'USER': env('DATABASE_USER'),
-        'PASSWORD': env('DATABASE_PASS'),
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'val-uDevops12345#',
         'HOST': '34.95.240.188',
         'PORT': '5432',
     }
