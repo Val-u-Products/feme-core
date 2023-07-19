@@ -3,5 +3,5 @@ WORKDIR /feme-core
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-EXPOSE $PORT
-CMD ["python", "src/manage.py", "runserver", "0.0.0.0:$PORT"]
+EXPOSE 8080
+CMD ["python", "src/manage.py", "runserver", "0.0.0.0:8080"]

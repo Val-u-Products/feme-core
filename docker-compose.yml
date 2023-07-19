@@ -7,9 +7,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python src/manage.py runserver 0.0.0.0:$PORT
+    command: python src/manage.py runserver 0.0.0.0:8080
     volumes:
       - .:/feme-core
     image: feme-core-web
     ports:
-      - "$PORT:$PORT"
+      - "8080:8080"
