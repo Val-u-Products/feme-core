@@ -10,5 +10,6 @@ services:
     command: python src/manage.py runserver 0.0.0.0:$PORT
     volumes:
       - .:/feme-core
+    image: feme-core-web
     ports:
       - "$PORT:$PORT"
