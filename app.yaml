@@ -14,3 +14,6 @@ env_variables:
 
 automatic_scaling:
   target_cpu_utilization: 0.65 
+
+vpc_access_connector:
+  name: projects/devops-feme/locations/uscentral1/connectors/cloud-run
