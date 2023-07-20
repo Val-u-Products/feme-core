@@ -1,15 +1,14 @@
-version: "3.8"
+version: '3.9'
 
 services:
-  web:
-    env_file:
-      - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: python src/manage.py runserver 0.0.0.0:8080
+  gcloud:
+    image: google/cloud-sdk:338.0.0
     volumes:
-      - .:/feme-core
-    image: feme-core-web
-    ports:
-      - "8080:8080"
+      - gcp-creds:/creds
+      - .:/app
+    working_dir: /app
+    environment:
+      - CLOUDSDK_CONFIG=/creds
+
+volumes:
+  gcp-creds:
