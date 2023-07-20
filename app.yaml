@@ -16,4 +16,5 @@ automatic_scaling:
   target_cpu_utilization: 0.65 
 
 vpc_access_connector:
-  name: projects/devops-feme/locations/uscentral1/connectors/cloud-run
+  name: projects/PROJECT_ID/locations/southamerica-east1/connectors/conector_feme
+  egress_setting: all-traffic
