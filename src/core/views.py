@@ -6,7 +6,7 @@
 # from rest_framework.permissions import IsAuthenticated
 # from rest_framework import status
 # from .models import MonitorTabla
-#from .serializers import UserSerializer
+# from .serializers import UserSerializer
 
 
 # class UserRegistration(APIView):
