@@ -33,6 +33,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('monitortabla/<int:pk>/actualizar_key/', actualizar_key, name='actualizar_key'),
     path('', include('core.urls')),
-    path('api/', include('authentication.urls')), # new line
+    path('api/auth/', include('authentication.urls')), # new line
     path('api/', include(router.urls)), # new line
 ]
