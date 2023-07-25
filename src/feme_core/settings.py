@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-6%jd$8(ft)=1v31k))pix*&+4us*1a(^a@hxqih!5-+d8q!=db
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.75.142.192']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'django.contrib.sites',
-    'rest_auth',
+    # 'rest_auth',
     'dj_rest_auth',
     'dj_rest_auth.registration',
 ]

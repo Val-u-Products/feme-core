@@ -18,6 +18,7 @@ class SalonTabla(models.Model):
     cierre_definitivo = models.DateTimeField(default=timezone.now, null=True)
     per_puntaje = models.IntegerField(null=True)
     materia_feme = models.CharField(max_length=255, null=True)
+    s_acceso = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'salon_tabla'
@@ -45,6 +46,7 @@ class Usuarios(models.Model):
     whatsapp = models.IntegerField(null=True)
     email = models.CharField(max_length=255)
     inscrito = models.CharField(max_length=2)
+    user_token = models.CharField(max_length=255, unique=True)
 
     class Meta:
         db_table = 'user'
@@ -81,6 +83,7 @@ class EstatusThinkific(models.Model):
     nota_progreso = models.FloatField()
     nota_total = models.IntegerField()
     nota_total_l = models.CharField(max_length=255)
+    e_acceso = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'estatus_thinkific'
@@ -128,6 +131,7 @@ class ContenidosColegio(models.Model):
     uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
     lapso = models.CharField(max_length=255)
     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+    c_acceso = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'contenidos_colegio'
@@ -140,6 +144,7 @@ class ModuloContenido(models.Model):
     contenido = models.CharField(max_length=255)
     semana_recom = models.IntegerField()
     tipo = models.IntegerField()
+    cm_acceso = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'modulo_contenido'
