@@ -46,7 +46,7 @@ class Usuarios(models.Model):
     whatsapp = models.IntegerField(null=True)
     email = models.CharField(max_length=255)
     inscrito = models.CharField(max_length=2)
-    user_token = models.CharField(max_length=255, unique=True)
+    user_token = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'user'

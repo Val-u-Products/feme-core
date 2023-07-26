@@ -6,7 +6,13 @@
 # from rest_framework.permissions import IsAuthenticated
 # from rest_framework import status
 # from .models import MonitorTabla
-#from .serializers import UserSerializer
+# from .serializers import UserSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Usuarios
+from .serializers import LoginSerializer
+
 
 
 # class UserRegistration(APIView):
@@ -66,3 +72,24 @@
 #         monitor.save()
         
 #         return Response({'key': nueva_key}, status=status.HTTP_200_OK)
+
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user_token = serializer.validated_data['user_token']
+            try:
+                usuario = Usuarios.objects.get(user_token=user_token)
+            except Usuarios.DoesNotExist:
+                return Response({"error": "Token de acceso inválido"}, status=status.HTTP_401_UNAUTHORIZED)
+
+            # Aquí puedes realizar cualquier otra lógica de autenticación adicional si es necesario
+
+            # Puedes devolver información adicional del usuario si lo deseas
+            response_data = {
+                "message": "Inicio de sesión exitoso",
+                "usuario_nombres": usuario.nombres,
+                "usuario_apellidos": usuario.apellidos,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -280,3 +280,6 @@ class JerarquiumSerializer(serializers.ModelSerializer):
 #             'nota_progreso',
 #             'nota_total',
 #         ]
+
+class LoginSerializer(serializers.Serializer):
+    user_token = serializers.CharField(max_length=255)
