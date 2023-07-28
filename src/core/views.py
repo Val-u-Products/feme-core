@@ -10,13 +10,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Usuarios, SalonInfoProfe, RankingEstudiantes
-from .serializers import LoginSerializer
+from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe
+from .serializers import LoginSerializer, InfoProfeSerializer
 
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.db.models import Max, Min
-
+from rest_framework.generics import ListAPIView
+from rest_framework.filters import BaseFilterBackend
+from django_filters import rest_framework as filters
 
 
 
@@ -200,3 +202,20 @@ class TopStudentsAPIView(APIView):
         }
 
         return Response(response_data)
+
+
+class IdProfeFilter(filters.FilterSet):
+    id_profe = filters.NumberFilter(field_name="id_profe")
+
+    class Meta:
+        model = InfoProfe
+        fields = ["id_profe"]
+
+class InfoProfeView(ListAPIView):
+    serializer_class = InfoProfeSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = IdProfeFilter
+
+    def get_queryset(self):
+        queryset = InfoProfe.objects.all().distinct('id_profe')
+        return queryset

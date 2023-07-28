@@ -20,10 +20,10 @@ from .models import (ColegioTabla,
                      Feedback,
                      Monitoreo,
                      Jerarquium,
-                     SalonInfoProfe,
+                     # SalonInfoProfe,
                      EstProfe,
                      EstatusGeneral,
-                     # SalonKpiModulo
+                     SalonKpiModulo
                      )
 from .serializers import (ColegioTablaSerializer, 
                           SalonTablaSerializer,
@@ -42,7 +42,7 @@ from .serializers import (ColegioTablaSerializer,
                           # SalonInfoProfeSerializer,
                           EstProfeSerializer,
                           EstatusGeneralSerializer,
-                          # SalonKpiModuloSerializer
+                          SalonKpiModuloSerializer
                           )
 
 
@@ -1129,68 +1129,68 @@ class EstatusGeneralViewSet(viewsets.ModelViewSet):
         return Response(response_list)
     
 
-# class SalonKpiModuloViewSet(viewsets.ModelViewSet):
-#     queryset = SalonKpiModulo.objects.all()
-#     # authentication_classes = [SessionAuthentication]
-#     # permission_classes = [IsAuthenticated]
-#     permission_classes = [AllowAny]
-#     serializer_class = SalonKpiModuloSerializer
-#     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-#     http_method_names = ['get']
-#     filterset_fields = [
-#                         'total_estudiantes',
-#                         'estudiantes_iniciados',
-#                         'estudiantes_50',
-#                         'estudiantes_completados',
-#                         'uuid_salon',
-#                         'grado',
-#                         'seccion',
-#                         'modulo',
-#                         'nombre_monitor',
-#                         'apellido_monitor'
-#                         ]
-#     search_fields = [
-#                     '^total_estudiantes',
-#                     '^estudiantes_iniciados',
-#                     '^estudiantes_50',
-#                     '^estudiantes_completados',
-#                     '^uuid_salon',
-#                     '^grado',
-#                     '^seccion',
-#                     '^modulo',
-#                     '^nombre_monitor',
-#                     '^apellido_monitor'
-#                     ]
+class SalonKpiModuloViewSet(viewsets.ModelViewSet):
+    queryset = SalonKpiModulo.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = SalonKpiModuloSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get']
+    filterset_fields = [
+                        'total_estudiantes',
+                        'estudiantes_iniciados',
+                        'estudiantes_50',
+                        'estudiantes_completados',
+                        'uuid_salon',
+                        'grado',
+                        'seccion',
+                        'modulo',
+                        'nombre_monitor',
+                        'apellido_monitor'
+                        ]
+    search_fields = [
+                    '^total_estudiantes',
+                    '^estudiantes_iniciados',
+                    '^estudiantes_50',
+                    '^estudiantes_completados',
+                    '^uuid_salon',
+                    '^grado',
+                    '^seccion',
+                    '^modulo',
+                    '^nombre_monitor',
+                    '^apellido_monitor'
+                    ]
     
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         fields = request.query_params.get('fields', None)
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
         
-#         if fields is None:
-#             serializer = self.get_serializer(queryset, many=True)
-#             return Response(serializer.data)
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
                 
-#         fields_list = fields.split(',')
+        fields_list = fields.split(',')
 
-#         filter_field = None
-#         filter_value = None
-#         for field in self.filterset_fields:
-#             value = request.query_params.get(field)
-#             if value is not None:
-#                 filter_field = field
-#                 filter_value = value
-#                 break
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
 
-#         if filter_field is not None and filter_value is not None:
-#             queryset = queryset.filter(**{filter_field: filter_value})
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
 
-#         response_list = []
-#         for item in queryset:
-#             item_dict = {}
-#             for field in fields_list:
-#                 if hasattr(item, field):
-#                     item_dict[field] = getattr(item, field)
-#             response_list.append(item_dict)
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
 
-#         return Response(response_list)
+        return Response(response_list)
     

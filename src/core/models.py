@@ -311,21 +311,21 @@ class ModulosRankingEstudiantes(models.Model):
         db_table = 'modulos_ranking_estudiantes'
 
 
-# class SalonKpiModulo(models.Model):
-#     total_estudiantes = models.BigIntegerField(db_column='Total Estudiantes')
-#     estudiantes_iniciados = models.BigIntegerField(db_column='Estudiantes iniciados')
-#     estudiantes_50 = models.BigIntegerField(db_column='Estudiantes 50')
-#     estudiantes_completados = models.BigIntegerField(db_column='Estudiantes completados')
-#     uuid_salon = models.CharField(primary_key=True, max_length=255)
-#     grado = models.CharField(max_length=255)
-#     seccion = models.CharField(max_length=255)
-#     modulo = models.CharField(max_length=255)
-#     nombre_monitor = models.CharField(max_length=255)
-#     apellido_monitor = models.CharField(max_length=255)
+class SalonKpiModulo(models.Model):
+    total_estudiantes = models.BigIntegerField(db_column='total_estudiantes')
+    estudiantes_iniciados = models.BigIntegerField(db_column='estudiantes_iniciados')
+    estudiantes_50 = models.BigIntegerField(db_column='estudiantes_50')
+    estudiantes_completados = models.BigIntegerField(db_column='estudiantes_completados')
+    uuid_salon = models.CharField(primary_key=True, max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    modulo = models.CharField(max_length=255)
+    nombre_monitor = models.CharField(max_length=255)
+    apellido_monitor = models.CharField(max_length=255)
 
-#     class Meta:
-#         managed = False
-#         db_table = 'modulos_ranking_estudiantes'
+    class Meta:
+        managed = False
+        db_table = 'salon_kpi_modulo'
 
 
 class SalonInfoProfe(models.Model):
@@ -350,3 +350,22 @@ class SalonInfoProfe(models.Model):
     class Meta:
         managed = False
         db_table = 'salon_info_profe'
+
+
+class InfoProfe(models.Model):
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    uuid_cole = models.CharField(primary_key=True, max_length=255)
+    uuid_salon = models.CharField(max_length=255)
+    id_profe = models.IntegerField()
+    nombre_monitor = models.CharField(max_length=255)
+    apellido_monitor = models.CharField(max_length=255)
+    whatsapp_monitor = models.IntegerField()
+    email_monitor = models.CharField(max_length=255)
+    inscrito_monitor = models.CharField(max_length=2)
+    user_token_monitor = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'est_profe2'

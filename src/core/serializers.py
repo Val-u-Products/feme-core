@@ -22,9 +22,10 @@ from .models import (ColegioTabla,
                      SalonInfoProfe,
                      EstProfe,
                      EstatusGeneral,
-                     # SalonKpiModulo
+                     SalonKpiModulo,
+                     InfoProfe
                      )
-
+from itertools import groupby
 
 class ColegioTablaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -246,10 +247,55 @@ class EstatusGeneralSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class SalonKpiModuloSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = SalonKpiModulo
-#         fields = '__all__'
+class SalonKpiModuloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalonKpiModulo
+        fields = '__all__'
+
+
+class SalonSerializer(serializers.Serializer):
+    uuid_salon = serializers.CharField()
+    nombre = serializers.SerializerMethodField()
+
+    def get_nombre(self, obj):
+        return f"{obj.grado} {obj.seccion}"
+
+class InfoProfeSerializer(serializers.ModelSerializer):
+    salones = serializers.SerializerMethodField()
+
+    class Meta:
+        model = InfoProfe
+        fields = [
+            "id_profe",
+            "colegio",
+            "nombre_monitor",
+            "apellido_monitor",
+            "whatsapp_monitor",
+            "email_monitor",
+            "inscrito_monitor",
+            "user_token_monitor",
+            "uuid_cole",
+            "salones"
+        ]
+
+    def get_salones(self, obj):
+        salones = InfoProfe.objects.filter(id_profe=obj.id_profe)
+        salones_data = []
+
+        # Agrupar salones por id_profe
+        grouped_salones = groupby(salones, key=lambda salon: salon.uuid_salon)
+
+        for uuid_salon, salon_group in grouped_salones:
+            salon_group = list(salon_group)
+            salon = salon_group[0]
+            salon_data = {
+                "uuid_salon": salon.uuid_salon,
+                "nombre": f"{salon.grado} {salon.seccion}",
+            }
+            salones_data.append(salon_data)
+
+        return salones_data
+
 
 # class EstudiantesRankingPorModulosSerializer(serializers.ModelSerializer):
 #     class Meta:
