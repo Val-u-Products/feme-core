@@ -19,7 +19,11 @@ from .models import (ColegioTabla,
                      QuizTabla,
                      Feedback,
                      Monitoreo,
-                     Jerarquium
+                     Jerarquium,
+                     SalonInfoProfe,
+                     EstProfe,
+                     EstatusGeneral,
+                     # SalonKpiModulo
                      )
 from .serializers import (ColegioTablaSerializer, 
                           SalonTablaSerializer,
@@ -34,7 +38,11 @@ from .serializers import (ColegioTablaSerializer,
                           QuizTablaSerializer,
                           FeedbackSerializer,
                           MonitoreoSerializer,
-                          JerarquiumSerializer
+                          JerarquiumSerializer,
+                          # SalonInfoProfeSerializer,
+                          EstProfeSerializer,
+                          EstatusGeneralSerializer,
+                          # SalonKpiModuloSerializer
                           )
 
 
@@ -862,4 +870,327 @@ class JerarquiumViewSet(viewsets.ModelViewSet):
             response_list.append(item_dict)
 
         return Response(response_list)
+    
+
+# class SalonInfoProfeViewSet(viewsets.ModelViewSet):
+#     queryset = SalonInfoProfe.objects.all()
+#     # authentication_classes = [SessionAuthentication]
+#     permission_classes = [AllowAny]
+#     serializer_class = SalonInfoProfeSerializer
+#     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+#     http_method_names = ['get']
+#     filterset_fields = [
+#                         'uuid_cole', 
+#                         'uuid_salon', 
+#                         'colegio', 
+#                         'grado', 
+#                         'seccion',
+#                         'total_estudiantes',
+#                         'per_completados',
+#                         'per_avanzado',
+#                         'per_solo_iniciado',
+#                         'per_no_iniciaron',
+#                         'per_pendiente',
+#                         'completados',
+#                         'avanzado',
+#                         'solo_iniciado',
+#                         'no_iniciaron',
+#                         'pendiente',
+#                         'id_profe'
+#                         ]
+#     search_fields = [
+#                     '^uuid_cole', 
+#                     '^uuid_salon', 
+#                     '^colegio', 
+#                     '^grado', 
+#                     '^seccion',
+#                     '^total_estudiantes',
+#                     '^per_completados',
+#                     '^per_avanzado',
+#                     '^per_solo_iniciado',
+#                     '^per_no_iniciaron',
+#                     '^per_pendiente',
+#                     '^completados',
+#                     '^avanzado',
+#                     '^solo_iniciado',
+#                     '^no_iniciaron',
+#                     '^pendiente',
+#                     '^id_profe'
+#                     ]
+    
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         fields = request.query_params.get('fields', None)
+        
+#         if fields is None:
+#             serializer = self.get_serializer(queryset, many=True)
+#             return Response(serializer.data)
+                
+#         fields_list = fields.split(',')
+
+#         filter_field = None
+#         filter_value = None
+#         for field in self.filterset_fields:
+#             value = request.query_params.get(field)
+#             if value is not None:
+#                 filter_field = field
+#                 filter_value = value
+#                 break
+
+#         if filter_field is not None and filter_value is not None:
+#             queryset = queryset.filter(**{filter_field: filter_value})
+
+#         response_list = []
+#         for item in queryset:
+#             item_dict = {}
+#             for field in fields_list:
+#                 if hasattr(item, field):
+#                     item_dict[field] = getattr(item, field)
+#             response_list.append(item_dict)
+
+#         return Response(response_list)
+
+
+class EstProfeViewSet(viewsets.ModelViewSet):
+    queryset = EstProfe.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = EstProfeSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get']
+    filterset_fields = [
+                        'id_v',
+                        'colegio',
+                        'grado',
+                        'seccion',
+                        'nombres',
+                        'apellidos',
+                        'whatsapp',
+                        'email',
+                        'inscrito',
+                        'rol',
+                        'uuid_cole',
+                        'uuid_salon',
+                        'user_token',
+                        'id_profe',
+                        'nombre_monitor',
+                        'apellido_monitor'
+                        ]
+    search_fields = [
+                    '^id_v',
+                    '^colegio',
+                    '^grado',
+                    '^seccion',
+                    '^nombres',
+                    '^apellidos',
+                    '^whatsapp',
+                    '^email',
+                    '^inscrito',
+                    '^rol',
+                    '^uuid_cole',
+                    '^uuid_salon',
+                    '^user_token',
+                    '^id_profe',
+                    '^nombre_monitor',
+                    '^apellido_monitor'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+class EstatusGeneralViewSet(viewsets.ModelViewSet):
+    queryset = EstatusGeneral.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = EstatusGeneralSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get']
+    filterset_fields = [
+                        'id_v',
+                        'colegio',
+                        'grado',
+                        'seccion',
+                        'nombres',
+                        'apellidos',
+                        'modulo',
+                        'started_at',
+                        'activated_at',
+                        'expirated_at',
+                        'completed_at',
+                        'per_completacion',
+                        'per_videos',
+                        'estatus',
+                        'created_at',
+                        'last_sign_in',
+                        'nota_quiz1',
+                        'nota_quiz2',
+                        'nota_quiz3',
+                        'fecha_q1',
+                        'fecha_q2',
+                        'fecha_q3',
+                        'nota_total',
+                        'nota_total_l',
+                        'e_acceso',
+                        'uuid_salon',
+                        'uuid_cole'
+                        ]
+    search_fields = [
+                    '^id_v',
+                    '^colegio',
+                    '^grado',
+                    '^seccion',
+                    '^nombres',
+                    '^apellidos',
+                    '^modulo',
+                    '^started_at',
+                    '^activated_at',
+                    '^expirated_at',
+                    '^completed_at',
+                    '^per_completacion',
+                    '^per_videos',
+                    '^estatus',
+                    '^created_at',
+                    '^last_sign_in',
+                    '^nota_quiz1',
+                    '^nota_quiz2',
+                    '^nota_quiz3',
+                    '^fecha_q1',
+                    '^fecha_q2',
+                    '^fecha_q3',
+                    '^nota_total',
+                    '^nota_total_l',
+                    '^e_acceso',
+                    '^uuid_salon',
+                    '^uuid_cole'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+# class SalonKpiModuloViewSet(viewsets.ModelViewSet):
+#     queryset = SalonKpiModulo.objects.all()
+#     # authentication_classes = [SessionAuthentication]
+#     # permission_classes = [IsAuthenticated]
+#     permission_classes = [AllowAny]
+#     serializer_class = SalonKpiModuloSerializer
+#     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+#     http_method_names = ['get']
+#     filterset_fields = [
+#                         'total_estudiantes',
+#                         'estudiantes_iniciados',
+#                         'estudiantes_50',
+#                         'estudiantes_completados',
+#                         'uuid_salon',
+#                         'grado',
+#                         'seccion',
+#                         'modulo',
+#                         'nombre_monitor',
+#                         'apellido_monitor'
+#                         ]
+#     search_fields = [
+#                     '^total_estudiantes',
+#                     '^estudiantes_iniciados',
+#                     '^estudiantes_50',
+#                     '^estudiantes_completados',
+#                     '^uuid_salon',
+#                     '^grado',
+#                     '^seccion',
+#                     '^modulo',
+#                     '^nombre_monitor',
+#                     '^apellido_monitor'
+#                     ]
+    
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         fields = request.query_params.get('fields', None)
+        
+#         if fields is None:
+#             serializer = self.get_serializer(queryset, many=True)
+#             return Response(serializer.data)
+                
+#         fields_list = fields.split(',')
+
+#         filter_field = None
+#         filter_value = None
+#         for field in self.filterset_fields:
+#             value = request.query_params.get(field)
+#             if value is not None:
+#                 filter_field = field
+#                 filter_value = value
+#                 break
+
+#         if filter_field is not None and filter_value is not None:
+#             queryset = queryset.filter(**{filter_field: filter_value})
+
+#         response_list = []
+#         for item in queryset:
+#             item_dict = {}
+#             for field in fields_list:
+#                 if hasattr(item, field):
+#                     item_dict[field] = getattr(item, field)
+#             response_list.append(item_dict)
+
+#         return Response(response_list)
     

@@ -49,7 +49,7 @@ class Usuarios(models.Model):
     user_token = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        db_table = 'user'
+        db_table = 'users'
 
 
 class ValuThinkific(models.Model):
@@ -200,3 +200,153 @@ class Jerarquium(models.Model):
 
     class Meta:
         db_table = 'jerarquia'
+
+
+class JProfeEst(models.Model):
+    id_v = models.IntegerField()
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    whatsapp = models.IntegerField()
+    email = models.CharField(max_length=255)
+    inscrito = models.CharField(max_length=2)
+    rol = models.CharField(max_length=255)
+    uuid_cole = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=255)
+    user_token = models.CharField(max_length=255)
+    id_profe = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'j_profe_est'
+
+
+class EstProfe(models.Model):
+    id_v = models.IntegerField(primary_key=True)
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    whatsapp = models.IntegerField()
+    email = models.CharField(max_length=255)
+    inscrito = models.CharField(max_length=2)
+    rol = models.CharField(max_length=255)
+    uuid_cole = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=255)
+    user_token = models.CharField(max_length=255)
+    id_profe = models.IntegerField()
+    nombre_monitor = models.CharField(max_length=255)
+    apellido_monitor = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'est_profe'
+
+
+class RankingEstudiantes(models.Model):
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=255)
+    id_v = models.IntegerField(primary_key=True)
+    nota_promedio = models.BigIntegerField()
+    modulos_completados = models.BigIntegerField()
+    ranking = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'ranking_estudiantes'
+
+
+class EstatusGeneral(models.Model):
+    id_v = models.IntegerField(primary_key=True)
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    modulo = models.CharField(max_length=255)
+    started_at = models.DateTimeField()
+    activated_at = models.DateTimeField()
+    expirated_at = models.DateTimeField()
+    completed_at = models.DateTimeField()
+    per_completacion = models.IntegerField()
+    per_videos = models.IntegerField()
+    estatus = models.CharField(max_length=255)
+    created_at = models.DateTimeField()
+    last_sign_in = models.DateTimeField()
+    nota_quiz1 = models.FloatField()
+    nota_quiz2 = models.FloatField()
+    nota_quiz3 = models.FloatField()
+    fecha_q1 = models.DateTimeField()
+    fecha_q2 = models.DateTimeField()
+    fecha_q3 = models.DateTimeField()
+    nota_total = models.IntegerField()
+    nota_total_l = models.CharField(max_length=255)
+    e_acceso = models.BooleanField(default=True)
+    uuid_salon = models.CharField(max_length=255)
+    uuid_cole = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'estatus_general_2'
+
+
+class ModulosRankingEstudiantes(models.Model):
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    uuid_salon = models.CharField(max_length=255)
+    nombre_monitor = models.CharField(max_length=255)
+    apellido_monitor = models.CharField(max_length=255)
+    modulo = models.CharField(max_length=255)
+    id_v = models.IntegerField()
+    nota_total = models.IntegerField()
+    id_modulo = models.BigIntegerField()
+    ranking = models.BigIntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'modulos_ranking_estudiantes'
+
+
+# class SalonKpiModulo(models.Model):
+#     total_estudiantes = models.BigIntegerField(db_column='Total Estudiantes')
+#     estudiantes_iniciados = models.BigIntegerField(db_column='Estudiantes iniciados')
+#     estudiantes_50 = models.BigIntegerField(db_column='Estudiantes 50')
+#     estudiantes_completados = models.BigIntegerField(db_column='Estudiantes completados')
+#     uuid_salon = models.CharField(primary_key=True, max_length=255)
+#     grado = models.CharField(max_length=255)
+#     seccion = models.CharField(max_length=255)
+#     modulo = models.CharField(max_length=255)
+#     nombre_monitor = models.CharField(max_length=255)
+#     apellido_monitor = models.CharField(max_length=255)
+
+#     class Meta:
+#         managed = False
+#         db_table = 'modulos_ranking_estudiantes'
+
+
+class SalonInfoProfe(models.Model):
+    uuid_cole = models.CharField(max_length=255)
+    uuid_salon = models.CharField(primary_key=True, max_length=255)
+    colegio = models.CharField(max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    total_estudiantes = models.BigIntegerField()
+    per_completados = models.BigIntegerField()
+    per_avanzado = models.BigIntegerField()
+    per_solo_iniciado = models.BigIntegerField()
+    per_no_iniciaron = models.BigIntegerField()
+    per_pendiente = models.BigIntegerField()
+    completados = models.BigIntegerField()
+    avanzado = models.BigIntegerField()
+    solo_iniciado = models.BigIntegerField()
+    no_iniciaron = models.BigIntegerField()
+    pendiente = models.BigIntegerField()
+    id_profe = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'salon_info_profe'

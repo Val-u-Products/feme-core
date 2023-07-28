@@ -12,7 +12,11 @@ from .api import (ColegioTablaViewSet,
                   QuizTablaViewSet,
                   FeedbackViewSet,
                   MonitoreoViewSet,
-                  JerarquiumViewSet
+                  JerarquiumViewSet,
+                  # SalonInfoProfeViewSet
+                  EstProfeViewSet,
+                  EstatusGeneralViewSet,
+                  # SalonKpiModuloViewSet
                   )
 
 
@@ -32,5 +36,9 @@ router.register('quiztabla', QuizTablaViewSet, 'quiz_tabla')
 router.register('feedback', FeedbackViewSet, 'feedback')
 router.register('monitoreo', MonitoreoViewSet, 'monitoreo')
 router.register('jerarquium', JerarquiumViewSet, 'jerarquium')
+# router.register('saloninfoprofe', SalonInfoProfeViewSet, 'salon_info_profe')
+router.register('estprofe', EstProfeViewSet, 'est_profe')
+router.register('estatusgeneral', EstatusGeneralViewSet, 'estatus_general')
+# router.register('salonkpimodulo', SalonKpiModuloViewSet, 'salon_kpi_modulo')
 
 urlpatterns = router.urls

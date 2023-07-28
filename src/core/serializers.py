@@ -18,7 +18,11 @@ from .models import (ColegioTabla,
                      QuizTabla,
                      Feedback,
                      Monitoreo,
-                     Jerarquium
+                     Jerarquium,
+                     SalonInfoProfe,
+                     EstProfe,
+                     EstatusGeneral,
+                     # SalonKpiModulo
                      )
 
 
@@ -223,6 +227,29 @@ class JerarquiumSerializer(serializers.ModelSerializer):
         model = Jerarquium
         fields = '__all__'
 
+
+# class SalonInfoProfeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SalonInfoProfe
+#         fields = '__all__'
+
+
+class EstProfeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstProfe
+        fields = '__all__'
+
+
+class EstatusGeneralSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstatusGeneral
+        fields = '__all__'
+
+
+# class SalonKpiModuloSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = SalonKpiModulo
+#         fields = '__all__'
 
 # class EstudiantesRankingPorModulosSerializer(serializers.ModelSerializer):
 #     class Meta:
