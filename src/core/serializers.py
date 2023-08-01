@@ -13,7 +13,7 @@ from .models import (ColegioTabla,
                      EstatusThinkific,
                      EstatusValu,
                      Modulos,
-                     ContenidosColegio,
+                     # ContenidosColegio,
                      ModuloContenido,
                      QuizTabla,
                      Feedback,
@@ -193,10 +193,10 @@ class ModulosSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ContenidosColegioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ContenidosColegio
-        fields = '__all__'
+# class ContenidosColegioSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ContenidosColegio
+#         fields = '__all__'
 
 
 class ModuloContenidoSerializer(serializers.ModelSerializer):

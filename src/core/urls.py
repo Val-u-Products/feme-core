@@ -7,7 +7,7 @@ from .api import (ColegioTablaViewSet,
                   EstatusThinkificViewSet,
                   EstatusValuViewSet,
                   ModulosViewSet,
-                  ContenidosColegioViewSet,
+                  # ContenidosColegioViewSet,
                   ModuloContenidoViewSet,
                   QuizTablaViewSet,
                   FeedbackViewSet,
@@ -30,7 +30,7 @@ router.register('valuthinkific', ValuThinkificViewSet, 'valu_thinkific')
 router.register('estatusthinkific', EstatusThinkificViewSet, 'estatus_thinkific')
 router.register('estatusvalu', EstatusValuViewSet, 'estatus_valu')
 router.register('modulos', ModulosViewSet, 'modulos')
-router.register('contenidoscolegio', ContenidosColegioViewSet, 'contenidos_colegio')
+# router.register('contenidoscolegio', ContenidosColegioViewSet, 'contenidos_colegio')
 router.register('modulocontenido', ModuloContenidoViewSet, 'modulo_contenido')
 router.register('quiztabla', QuizTablaViewSet, 'quiz_tabla')
 router.register('feedback', FeedbackViewSet, 'feedback')

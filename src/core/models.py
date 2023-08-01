@@ -47,9 +47,14 @@ class Usuarios(models.Model):
     email = models.CharField(max_length=255)
     inscrito = models.CharField(max_length=2)
     user_token = models.CharField(max_length=255, null=True, blank=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'users'
+
+    def delete(self, using=None, keep_parents=False):
+        self.deleted = True
+        self.save()
 
 
 class ValuThinkific(models.Model):
@@ -113,6 +118,7 @@ class EstatusValu(models.Model):
     fecha_q3 = models.DateTimeField(default=timezone.now, null=True)
     nota_total = models.IntegerField()
     nota_total_l = models.CharField(max_length=255)
+    e_acceso = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'estatus_valu'
@@ -120,31 +126,31 @@ class EstatusValu(models.Model):
 
 class Modulos(models.Model):
     id_mol = models.CharField(primary_key=True, unique=True)
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'modulos'
 
 
-class ContenidosColegio(models.Model):
-    id_c = models.IntegerField(primary_key=True, unique=True)
-    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
-    lapso = models.CharField(max_length=255)
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-    c_acceso = models.BooleanField(default=True)
+# class ContenidosColegio(models.Model):
+#     id_c = models.IntegerField(primary_key=True, unique=True)
+#     uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
+#     lapso = models.CharField(max_length=255)
+#     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+#     c_acceso = models.BooleanField(default=True)
 
-    class Meta:
-        db_table = 'contenidos_colegio'
+#     class Meta:
+#         db_table = 'contenidos_colegio'
 
 
 class ModuloContenido(models.Model):
-    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol', null=True)
     id_cont = models.CharField(primary_key=True, unique=True, max_length=255)
-    orden = models.IntegerField()
-    contenido = models.CharField(max_length=255)
-    semana_recom = models.IntegerField()
-    tipo = models.IntegerField()
-    cm_acceso = models.BooleanField(default=True)
+    orden_c = models.IntegerField(null=True)
+    # contenido = models.CharField(max_length=255)
+    semana_recom = models.IntegerField(null=True)
+    tipo = models.IntegerField(null=True)
+    cm_acceso = models.BooleanField(default=True, null=True)
 
     class Meta:
         db_table = 'modulo_contenido'
@@ -152,21 +158,79 @@ class ModuloContenido(models.Model):
 
 class QuizTabla(models.Model):
     id_q = models.IntegerField(primary_key=True, unique=True)
-    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont')
-    id_pregunta = models.CharField(max_length=255)
-    quiz = models.IntegerField()
-    seccion = models.IntegerField()
-    titulo_de_seccion = models.CharField(max_length=255)
-    pregunta = models.CharField(max_length=255)
-    respuesta_correcta = models.CharField(max_length=255)
-    respuesta_incorrecta_1 = models.CharField(max_length=255)
-    respuesta_incorrecta_2 = models.CharField(max_length=255)
-    respuesta_incorrecta_3 = models.CharField(max_length=255)
-    respuesta_incorrecta_4 = models.CharField(max_length=255)
-    explicacion_correcta = models.CharField(max_length=255)
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
+    id_pregunta = models.CharField(max_length=255, null=True)
+    tipo = models.CharField(max_length=255, null=True)
+    quiz = models.IntegerField(null=True)
+    # seccion = models.IntegerField()
+    # titulo_de_seccion = models.CharField(max_length=255)
+    pregunta = models.CharField(max_length=255, null=True)
+    # respuesta_correcta = models.CharField(max_length=255)
+    # respuesta_incorrecta_1 = models.CharField(max_length=255)
+    # respuesta_incorrecta_2 = models.CharField(max_length=255)
+    # respuesta_incorrecta_3 = models.CharField(max_length=255)
+    # respuesta_incorrecta_4 = models.CharField(max_length=255)
+    explicacion_correcta = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'quiz_tabla'
+
+
+class MiniQuiz(models.Model):
+    id_mq = models.IntegerField(null=True)
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
+    opciones = models.CharField(max_length=255, null=True)
+    valor = models.BooleanField(default=True, null=True)
+
+    class Meta:
+        db_table = 'mini_quiz'
+
+
+class Guias(models.Model):
+    id_g = models.IntegerField(null=True)
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
+    contenido = models.CharField(max_length=255, null=True)
+    orden = models.IntegerField(null=True)
+    url_g = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = 'guias'
+
+
+class SeleccionTodas(models.Model):
+    id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
+    opciones = models.CharField(max_length=255, null=True)
+    valor = models.BooleanField(default=True, null=True)
+
+    class Meta:
+        db_table = 'seleccion_todas'
+
+
+class Orden(models.Model):
+    id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
+    correcta = models.CharField(max_length=255, null=True)
+    opcion_1 = models.CharField(max_length=255, null=True)
+    opcion_2 = models.CharField(max_length=255, null=True)
+    opcion_3 = models.CharField(max_length=255, null=True)
+    opcion_4 = models.CharField(max_length=255, null=True)
+    opcion_5 = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = 'orden'
+
+
+class Pareo(models.Model):
+    id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
+    correcta = models.CharField(max_length=255, null=True)
+    lado_izq = models.CharField(max_length=255, null=True)
+    opcion_1 = models.CharField(max_length=255, null=True)
+    opcion_2 = models.CharField(max_length=255, null=True)
+    opcion_3 = models.CharField(max_length=255, null=True)
+    opcion_4 = models.CharField(max_length=255, null=True)
+    opcion_5 = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = 'pareo'
 
 
 class Feedback(models.Model):

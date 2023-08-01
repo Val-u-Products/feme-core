@@ -14,7 +14,7 @@ from .models import (ColegioTabla,
                      EstatusThinkific,
                      EstatusValu,
                      Modulos,
-                     ContenidosColegio,
+                     # ContenidosColegio,
                      ModuloContenido,
                      QuizTabla,
                      Feedback,
@@ -33,7 +33,7 @@ from .serializers import (ColegioTablaSerializer,
                           EstatusThinkificSerializer,
                           EstatusValuSerializer,
                           ModulosSerializer,
-                          ContenidosColegioSerializer,
+                          # ContenidosColegioSerializer,
                           ModuloContenidoSerializer,
                           QuizTablaSerializer,
                           FeedbackSerializer,
@@ -546,47 +546,47 @@ class ModulosViewSet(viewsets.ModelViewSet):
         return Response(response_list)
 
 
-class ContenidosColegioViewSet(viewsets.ModelViewSet):
-    queryset = ContenidosColegio.objects.all()
-    # authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
-    serializer_class = ContenidosColegioSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
-    filterset_fields = ['id_c', 'uuid_salon', 'lapso', 'id_mol']
-    search_fields = ['^id_c', '^uuid_salon', '^lapso', '^id_mol']
+# class ContenidosColegioViewSet(viewsets.ModelViewSet):
+#     queryset = ContenidosColegio.objects.all()
+#     # authentication_classes = [SessionAuthentication]
+#     permission_classes = [AllowAny]
+#     serializer_class = ContenidosColegioSerializer
+#     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+#     http_method_names = ['get', 'post', 'patch']
+#     filterset_fields = ['id_c', 'uuid_salon', 'lapso', 'id_mol']
+#     search_fields = ['^id_c', '^uuid_salon', '^lapso', '^id_mol']
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.filter_queryset(self.get_queryset())
+#         fields = request.query_params.get('fields', None)
         
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
+#         if fields is None:
+#             serializer = self.get_serializer(queryset, many=True)
+#             return Response(serializer.data)
                 
-        fields_list = fields.split(',')
+#         fields_list = fields.split(',')
 
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
+#         filter_field = None
+#         filter_value = None
+#         for field in self.filterset_fields:
+#             value = request.query_params.get(field)
+#             if value is not None:
+#                 filter_field = field
+#                 filter_value = value
+#                 break
 
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
+#         if filter_field is not None and filter_value is not None:
+#             queryset = queryset.filter(**{filter_field: filter_value})
 
-        response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
+#         response_list = []
+#         for item in queryset:
+#             item_dict = {}
+#             for field in fields_list:
+#                 if hasattr(item, field):
+#                     item_dict[field] = getattr(item, field)
+#             response_list.append(item_dict)
 
-        return Response(response_list)
+#         return Response(response_list)
     
 
 class ModuloContenidoViewSet(viewsets.ModelViewSet):

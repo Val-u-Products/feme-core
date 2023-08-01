@@ -92,6 +92,18 @@ WSGI_APPLICATION = 'feme_core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'val3',
+#         'USER': 'sgpostgres',
+#         'PASSWORD': 'R5GYKHeARc8z+KNv',
+#         'HOST': 'SG-even-tv-1119-4790-pgsql-master.servers.mongodirector.com',
+#         'PORT': '5432',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -166,7 +178,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    "EXCEPTION_HANDLER": "authentication.exceptions.custom_exception_handler"
 }
 
 # SIMPLE_JWT = {
