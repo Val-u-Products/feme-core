@@ -5,6 +5,7 @@ from rest_framework.authentication import SessionAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.response import Response
+from collections import defaultdict
 
 from .models import (ColegioTabla, 
                      SalonTabla,
@@ -1004,35 +1005,33 @@ class EstProfeViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        fields = request.query_params.get('fields', None)
         
-        if fields is None:
-            serializer = self.get_serializer(queryset, many=True)
-            return Response(serializer.data)
-                
-        fields_list = fields.split(',')
-
-        filter_field = None
-        filter_value = None
-        for field in self.filterset_fields:
-            value = request.query_params.get(field)
-            if value is not None:
-                filter_field = field
-                filter_value = value
-                break
-
-        if filter_field is not None and filter_value is not None:
-            queryset = queryset.filter(**{filter_field: filter_value})
+        salon_estudiantes = defaultdict(list)
+        for item in queryset:
+            salon_key = item.uuid_salon
+            grado_key = item.grado
+            seccion_key = item.seccion
+            estudiante_info = {
+                "nombres": item.nombres,
+                "apellidos": item.apellidos,
+                "id_v": item.id_v,
+            }
+            salon_estudiantes[salon_key].append((grado_key, seccion_key, estudiante_info))
 
         response_list = []
-        for item in queryset:
-            item_dict = {}
-            for field in fields_list:
-                if hasattr(item, field):
-                    item_dict[field] = getattr(item, field)
-            response_list.append(item_dict)
+        for salon_key, estudiantes_info in salon_estudiantes.items():
+            estudiantes = []
+            for grado_key, seccion_key, estudiante_info in estudiantes_info:
+                estudiantes.append(estudiante_info)
+            
+            salon_info = {
+                "nombre": f"{grado_key} {seccion_key}",
+                "uuid_salon": salon_key,
+                "estudiantes": estudiantes,
+            }
+            response_list.append(salon_info)
 
-        return Response(response_list)
+        return Response({"salones": response_list})
     
 
 class EstatusGeneralViewSet(viewsets.ModelViewSet):
