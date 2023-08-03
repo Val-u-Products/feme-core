@@ -56,6 +56,10 @@ class Usuarios(models.Model):
         self.deleted = True
         self.save()
 
+    def restore(self):
+        self.deleted = False
+        self.save()
+        
 
 class ValuThinkific(models.Model):
     id_thinkific = models.IntegerField(primary_key=True, unique=True)
@@ -149,7 +153,7 @@ class ModuloContenido(models.Model):
     orden_c = models.IntegerField(null=True)
     # contenido = models.CharField(max_length=255)
     semana_recom = models.IntegerField(null=True)
-    tipo = models.IntegerField(null=True)
+    tipo = models.CharField(max_length=255, null=True)
     cm_acceso = models.BooleanField(default=True, null=True)
 
     class Meta:
@@ -164,13 +168,13 @@ class QuizTabla(models.Model):
     quiz = models.IntegerField(null=True)
     # seccion = models.IntegerField()
     # titulo_de_seccion = models.CharField(max_length=255)
-    pregunta = models.CharField(max_length=255, null=True)
+    pregunta = models.TextField(null=True)
     # respuesta_correcta = models.CharField(max_length=255)
     # respuesta_incorrecta_1 = models.CharField(max_length=255)
     # respuesta_incorrecta_2 = models.CharField(max_length=255)
     # respuesta_incorrecta_3 = models.CharField(max_length=255)
     # respuesta_incorrecta_4 = models.CharField(max_length=255)
-    explicacion_correcta = models.CharField(max_length=255, null=True)
+    explicacion_correcta = models.TextField(null=True)
 
     class Meta:
         db_table = 'quiz_tabla'
@@ -179,8 +183,9 @@ class QuizTabla(models.Model):
 class MiniQuiz(models.Model):
     id_mq = models.IntegerField(null=True)
     id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
-    opciones = models.CharField(max_length=255, null=True)
+    opciones = models.TextField(null=True)
     valor = models.BooleanField(default=True, null=True)
+    correcta = models.TextField(null=True)
 
     class Meta:
         db_table = 'mini_quiz'
@@ -189,7 +194,7 @@ class MiniQuiz(models.Model):
 class Guias(models.Model):
     id_g = models.IntegerField(null=True)
     id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
-    contenido = models.CharField(max_length=255, null=True)
+    contenido = models.TextField(null=True)
     orden = models.IntegerField(null=True)
     url_g = models.CharField(max_length=255, null=True)
 
@@ -199,7 +204,7 @@ class Guias(models.Model):
 
 class SeleccionTodas(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
-    opciones = models.CharField(max_length=255, null=True)
+    opciones = models.TextField(null=True)
     valor = models.BooleanField(default=True, null=True)
 
     class Meta:
@@ -208,12 +213,12 @@ class SeleccionTodas(models.Model):
 
 class Orden(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
-    correcta = models.CharField(max_length=255, null=True)
-    opcion_1 = models.CharField(max_length=255, null=True)
-    opcion_2 = models.CharField(max_length=255, null=True)
-    opcion_3 = models.CharField(max_length=255, null=True)
-    opcion_4 = models.CharField(max_length=255, null=True)
-    opcion_5 = models.CharField(max_length=255, null=True)
+    correcta = models.TextField(null=True)
+    opcion_1 = models.TextField(null=True)
+    opcion_2 = models.TextField(null=True)
+    opcion_3 = models.TextField(null=True)
+    opcion_4 = models.TextField(null=True)
+    opcion_5 = models.TextField(null=True)
 
     class Meta:
         db_table = 'orden'
@@ -221,13 +226,13 @@ class Orden(models.Model):
 
 class Pareo(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
-    correcta = models.CharField(max_length=255, null=True)
-    lado_izq = models.CharField(max_length=255, null=True)
-    opcion_1 = models.CharField(max_length=255, null=True)
-    opcion_2 = models.CharField(max_length=255, null=True)
-    opcion_3 = models.CharField(max_length=255, null=True)
-    opcion_4 = models.CharField(max_length=255, null=True)
-    opcion_5 = models.CharField(max_length=255, null=True)
+    correcta = models.TextField(null=True)
+    lado_izq = models.TextField(null=True)
+    opcion_1 = models.TextField(null=True)
+    opcion_2 = models.TextField(null=True)
+    opcion_3 = models.TextField(null=True)
+    opcion_4 = models.TextField(null=True)
+    opcion_5 = models.TextField(null=True)
 
     class Meta:
         db_table = 'pareo'

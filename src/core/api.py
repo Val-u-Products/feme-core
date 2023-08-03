@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.authentication import SessionAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 from .models import (ColegioTabla, 
@@ -196,13 +196,13 @@ class RolViewSet(viewsets.ModelViewSet):
 
 
 class UsuariosViewSet(viewsets.ModelViewSet):
-    queryset = Usuarios.objects.all()
+    queryset = Usuarios.objects.filter(deleted=False)
     # authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
     permission_classes = [AllowAny]
     serializer_class = UsuariosSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     filterset_fields = [
                         'id_v', 
                         'uuid_cole', 
@@ -231,6 +231,12 @@ class UsuariosViewSet(viewsets.ModelViewSet):
                     '^email',
                     '^inscrito'
                     ]
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.deleted = True
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
