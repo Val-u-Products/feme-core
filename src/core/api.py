@@ -1007,6 +1007,8 @@ class EstProfeViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
         
         salon_estudiantes = defaultdict(list)
+        total_estudiantes = 0
+        
         for item in queryset:
             salon_key = item.uuid_salon
             grado_key = item.grado
@@ -1017,7 +1019,8 @@ class EstProfeViewSet(viewsets.ModelViewSet):
                 "id_v": item.id_v,
             }
             salon_estudiantes[salon_key].append((grado_key, seccion_key, estudiante_info))
-
+            total_estudiantes += 1  # Incrementar el contador de estudiantes
+        
         response_list = []
         for salon_key, estudiantes_info in salon_estudiantes.items():
             estudiantes = []
@@ -1031,7 +1034,13 @@ class EstProfeViewSet(viewsets.ModelViewSet):
             }
             response_list.append(salon_info)
 
-        return Response({"salones": response_list})
+        # Agregar el campo 'total_estudiantes' a la respuesta
+        response_data = {
+            "total_estudiantes": total_estudiantes,
+            "salones": response_list
+        }
+        
+        return Response(response_data)
     
 
 class EstatusGeneralViewSet(viewsets.ModelViewSet):
