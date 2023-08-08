@@ -19,6 +19,7 @@ from django.db.models import Max, Min
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import BaseFilterBackend
 from django_filters import rest_framework as filters
+from django.http import Http404
 
 
 
@@ -398,3 +399,312 @@ class ProgresoView(APIView):
             return Response(static_data_primera)
         
 
+static_data_segunda = [
+    {
+        "id_profe": 3000003,
+        "salones": 
+        [
+            {
+                "uuid_salon": "4db75127-2eca-49ae-9df7-9d38a7b044b7",
+                "nombre_salon": "1er Año A",
+                "total_estudiantes": "8",
+                "per_completados": "5",
+                "per_no_iniciado": "3",
+                "title": "Tipos de criptomonedas",
+                "description": "Texto",
+                "start_date": "18/09/2023"
+            },
+            {
+                "uuid_salon": "1cc8c31d-cb4f-4d2a-9861-4f2194e3adc0",
+                "nombre_salon": "2do Año A",
+                "total_estudiantes": "4",
+                "per_completados": "1",
+                "per_no_iniciado": "3",
+                "title": "Relaciones",
+                "description": "Texto",
+                "start_date": "19/09/2023"
+            },
+            {
+                "uuid_salon": "1dba069b-a779-4000-a0c3-750017d323ba",
+                "nombre_salon": "3er Año A",
+                "total_estudiantes": "4",
+                "per_completados": "2",
+                "per_no_iniciado": "2",
+                "title": "Mercado Municipal: Parte I",
+                "description": "Texto",
+                "start_date": "20/09/2023"
+            }
+        ]
+    },
+    {
+        "id_profe": 3000008,
+        "salones": 
+        [
+            {
+                "uuid_salon": "7558864d-484c-4adf-8a98-22abb2414af0",
+                "nombre_salon": "2do Año A",
+                "total_estudiantes": "18",
+                "per_completados": "13",
+                "per_no_iniciado": "5",
+                "title": "Corredores de Bolsa",
+                "description": "Texto",
+                "start_date": "21/09/2023"
+            },
+            {
+                "uuid_salon": "4db75127-2eca-49ae-9df7-9d38a7b044b7",
+                "nombre_salon": "3er Año A",
+                "total_estudiantes": "10",
+                "per_completados": "8",
+                "per_no_iniciado": "2",
+                "title": "Online vs Presencial",
+                "description": "Texto",
+                "start_date": "22/09/2023"
+            }
+        ]
+    },
+    {
+        "id_profe": 3000015,
+        "salones": 
+        [
+            {
+                "uuid_salon": "741debe8-b961-4109-9113-019ec8789957",
+                "nombre_salon": "3er Año A",
+                "total_estudiantes": "25",
+                "per_completados": "17",
+                "per_no_iniciado": "8",
+                "title": "Nodos",
+                "description": "Texto",
+                "start_date": "23/09/2023"
+            },
+            {
+                "uuid_salon": "02d0ba97-66a2-4e21-ad87-1e6e54c064fe",
+                "nombre_salon": "3er Año B",
+                "total_estudiantes": "15",
+                "per_completados": "5",
+                "per_no_iniciado": "10",
+                "title": "Recuento total de transacciones",
+                "description": "Texto",
+                "start_date": "24/09/2023"
+            },
+            {
+                "uuid_salon": "377e1d24-c5a8-45ed-908e-7bffd0c627cc",
+                "nombre_salon": "3er Año C",
+                "total_estudiantes": "18",
+                "per_completados": "10",
+                "per_no_iniciado": "8",
+                "title": "Emprendimiento y Finanzas",
+                "description": "Texto",
+                "start_date": "25/09/2023"
+            },
+            {
+                "uuid_salon": "f064ab59-7d60-420a-acfd-8264e12bec5e",
+                "nombre_salon": "3er Año N",
+                "total_estudiantes": "31",
+                "per_completados": "20",
+                "per_no_iniciado": "11",
+                "title": "¡Ten Cuidado!",
+                "description": "Texto",
+                "start_date": "26/09/2023"
+            },
+            {
+                "uuid_salon": "f064ab59-7d60-420a-acfd-8264e12bec5e",
+                "nombre_salon": "4to Año A",
+                "total_estudiantes": "49",
+                "per_completados": "30",
+                "per_no_iniciado": "19",
+                "title": "Matriculas Universitarias",
+                "description": "Texto",
+                "start_date": "27/09/2023"
+            },
+            {
+                "uuid_salon": "08db0ab3-63a6-446a-9c52-e21af8641134",
+                "nombre_salon": "4to Año A",
+                "total_estudiantes": "49",
+                "per_completados": "30",
+                "per_no_iniciado": "19",
+                "title": "Mineros",
+                "description": "Texto",
+                "start_date": "28/09/2023"
+            },
+            {
+                "uuid_salon": "e8746dba-406a-409a-ab1e-76889a9178cc",
+                "nombre_salon": "4to Año D",
+                "total_estudiantes": "1",
+                "per_completados": "1",
+                "per_no_iniciado": "0",
+                "title": "Más allá de Wall Street",
+                "description": "Texto",
+                "start_date": "29/09/2023"
+            },
+            {
+                "uuid_salon": "7d93149c-3d6d-4db0-80bf-03d3985f473e",
+                "nombre_salon": "4to Año N",
+                "total_estudiantes": "27",
+                "per_completados": "19",
+                "per_no_iniciado": "8",
+                "title": "Halving",
+                "description": "Texto",
+                "start_date": "20/09/2023"
+            },
+            {
+                "uuid_salon": "7f10002d-b5ef-443a-b59c-17c28086baa3",
+                "nombre_salon": "5to Año A",
+                "total_estudiantes": "28",
+                "per_completados": "9",
+                "per_no_iniciado": "19",
+                "title": "Microeconomía', 'Actividades clave",
+                "description": "Texto",
+                "start_date": "21/09/2023"
+            },
+            {
+                "uuid_salon": "0ddd2e48-7951-4680-bbb7-b134a3104fe5",
+                "nombre_salon": "5to Año N",
+                "total_estudiantes": "41",
+                "per_completados": "30",
+                "per_no_iniciado": "11",
+                "title": "¡Las mejores universidades de Latinoamérica!",
+                "description": "Texto",
+                "start_date": "22/09/2023"
+            }
+        ]
+    },
+    {
+        "id_profe": 3000016,
+        "salones": 
+        [
+            {
+                "uuid_salon": "57eed45f-46d2-46ee-bc23-a51e4e9530af",
+                "nombre_salon": "1er Año A",
+                "total_estudiantes": "22",
+                "per_completados": "12",
+                "per_no_iniciado": "10",
+                "title": "Networking: una red laboral",
+                "description": "Texto",
+                "start_date": "23/09/2023"
+            },
+            {
+                "uuid_salon": "bbccc264-aec8-4684-b3c5-5ebf382d3a67",
+                "nombre_salon": "1er Año B",
+                "total_estudiantes": "55",
+                "per_completados": "39",
+                "per_no_iniciado": "16",
+                "title": "Instrumentos Financieros - Criptomonedas",
+                "description": "Texto",
+                "start_date": "24/09/2023"
+            },
+            {
+                "uuid_salon": "50ece3fc-e768-459d-9e91-f1e76a3c8459",
+                "nombre_salon": "1er Año N",
+                "total_estudiantes": "7",
+                "per_completados": "1",
+                "per_no_iniciado": "6",
+                "title": "Hash Rate & Dificultad",
+                "description": "Texto",
+                "start_date": "25/09/2023"
+            },
+            {
+                "uuid_salon": "19fe7f23-f550-4b8d-ad85-4012591e5818",
+                "nombre_salon": "4to Año A",
+                "total_estudiantes": "26",
+                "per_completados": "20",
+                "per_no_iniciado": "6",
+                "title": "Recursos clave",
+                "description": "Texto",
+                "start_date": "26/09/2023"
+            },
+            {
+                "uuid_salon": "2fbb26a6-98a9-46ff-8b0d-dc349a5e7e77",
+                "nombre_salon": "4to Año B",
+                "total_estudiantes": "19",
+                "per_completados": "11",
+                "per_no_iniciado": "8",
+                "title": "¡Los protagonistas del sistema bancario!",
+                "description": "Texto",
+                "start_date": "27/09/2023"
+            },
+            {
+                "uuid_salon": "c038ec17-1f83-498d-b174-138a9d8018f8",
+                "nombre_salon": "5to Año A",
+                "total_estudiantes": "25",
+                "per_completados": "9",
+                "per_no_iniciado": "16",
+                "title": "Sectores del mercado",
+                "description": "Texto",
+                "start_date": "28/09/2023"
+            },
+            {
+                "uuid_salon": "9a142bb6-6330-4ff5-8a45-ac2754a0fa65",
+                "nombre_salon": "5to Año B",
+                "total_estudiantes": "22",
+                "per_completados": "21",
+                "per_no_iniciado": "1",
+                "title": "Tipos de criptomonedas",
+                "description": "Texto",
+                "start_date": "29/09/2023"
+            },
+            {
+                "uuid_salon": "10826305-aa44-453f-9635-ce9848e2ed6a",
+                "nombre_salon": "5to Año N",
+                "total_estudiantes": "46",
+                "per_completados": "23",
+                "per_no_iniciado": "23",
+                "title": "estandar",
+                "description": "Texto",
+                "start_date": "11/09/2023"
+            },
+            {
+                "uuid_salon": "7f10002d-b5ef-443a-b59c-17c28086baa3",
+                "nombre_salon": "5to Año A",
+                "total_estudiantes": "28",
+                "per_completados": "9",
+                "per_no_iniciado": "19",
+                "title": "Mercado Municipal: Parte I",
+                "description": "Texto",
+                "start_date": "12/09/2023"
+            },
+            {
+                "uuid_salon": "0ddd2e48-7951-4680-bbb7-b134a3104fe5",
+                "nombre_salon": "5to Año N",
+                "total_estudiantes": "41",
+                "per_completados": "30",
+                "per_no_iniciado": "11",
+                "title": "Corredores de Bolsa",
+                "description": "Texto",
+                "start_date": "13/09/2023"
+            }
+        ]
+    }
+]
+
+class ProgresoDataView(APIView):
+    def get_object_by_id_profe(self, id_profe):
+        try:
+            return next(item for item in static_data_segunda if item['id_profe'] == id_profe)
+        except StopIteration:
+            raise Http404
+
+    def get_object_by_uuid_salon(self, uuid_salon):
+        try:
+            for item in static_data_segunda:
+                for salon in item['salones']:
+                    if salon['uuid_salon'] == uuid_salon:
+                        return {
+                            'id_profe': item['id_profe'],
+                            'salones': [salon],
+                        }
+            raise StopIteration
+        except StopIteration:
+            raise Http404
+
+    def get(self, request, *args, **kwargs):
+        id_profe = request.query_params.get('id_profe')
+        uuid_salon = request.query_params.get('uuid_salon')
+
+        if id_profe:
+            data = self.get_object_by_id_profe(int(id_profe))
+            return Response(data)
+        elif uuid_salon:
+            data = self.get_object_by_uuid_salon(uuid_salon)
+            return Response(data)
+        else:
+            return Response(static_data_segunda)
