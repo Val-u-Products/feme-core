@@ -136,22 +136,21 @@ class Modulos(models.Model):
         db_table = 'modulos'
 
 
-# class ContenidosColegio(models.Model):
-#     id_c = models.IntegerField(primary_key=True, unique=True)
-#     uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
-#     lapso = models.CharField(max_length=255)
-#     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
-#     c_acceso = models.BooleanField(default=True)
+class ContenidosColegio(models.Model):
+    id_c = models.IntegerField(primary_key=True, unique=True)
+    uuid_salon = models.ForeignKey(SalonTabla, on_delete=models.CASCADE, db_column='uuid_salon')
+    lapso = models.CharField(max_length=255)
+    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+    c_acceso = models.BooleanField(default=True)
 
-#     class Meta:
-#         db_table = 'contenidos_colegio'
+    class Meta:
+        db_table = 'contenidos_colegio'
 
 
 class ModuloContenido(models.Model):
     id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol', null=True)
     id_cont = models.CharField(primary_key=True, unique=True, max_length=255)
     orden_c = models.IntegerField(null=True)
-    # contenido = models.CharField(max_length=255)
     semana_recom = models.IntegerField(null=True)
     tipo = models.CharField(max_length=255, null=True)
     cm_acceso = models.BooleanField(default=True, null=True)
@@ -161,20 +160,11 @@ class ModuloContenido(models.Model):
 
 
 class QuizTabla(models.Model):
-    id_q = models.IntegerField(primary_key=True, unique=True)
+    id_q = models.IntegerField(unique=True)
     id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont', null=True)
-    id_pregunta = models.CharField(max_length=255, null=True)
+    id_pregunta = models.CharField(primary_key=True, max_length=255)
     tipo = models.CharField(max_length=255, null=True)
     quiz = models.IntegerField(null=True)
-    # seccion = models.IntegerField()
-    # titulo_de_seccion = models.CharField(max_length=255)
-    pregunta = models.TextField(null=True)
-    # respuesta_correcta = models.CharField(max_length=255)
-    # respuesta_incorrecta_1 = models.CharField(max_length=255)
-    # respuesta_incorrecta_2 = models.CharField(max_length=255)
-    # respuesta_incorrecta_3 = models.CharField(max_length=255)
-    # respuesta_incorrecta_4 = models.CharField(max_length=255)
-    explicacion_correcta = models.TextField(null=True)
 
     class Meta:
         db_table = 'quiz_tabla'
@@ -206,6 +196,9 @@ class SeleccionTodas(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
     opciones = models.TextField(null=True)
     valor = models.BooleanField(default=True, null=True)
+    pregunta = models.TextField(null=True)
+    explicacion = models.TextField(null=True)
+    puntos = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'seleccion_todas'
@@ -213,12 +206,11 @@ class SeleccionTodas(models.Model):
 
 class Orden(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
-    correcta = models.TextField(null=True)
-    opcion_1 = models.TextField(null=True)
-    opcion_2 = models.TextField(null=True)
-    opcion_3 = models.TextField(null=True)
-    opcion_4 = models.TextField(null=True)
-    opcion_5 = models.TextField(null=True)
+    pregunta = models.TextField(null=True)
+    opciones = models.TextField(null=True)
+    orden_opcion = models.IntegerField(null=True)
+    explicacion = models.TextField(null=True)
+    puntos = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'orden'
@@ -226,13 +218,11 @@ class Orden(models.Model):
 
 class Pareo(models.Model):
     id_pregunta = models.ForeignKey(QuizTabla, on_delete=models.CASCADE, db_column='id_pregunta', null=True)
-    correcta = models.TextField(null=True)
-    lado_izq = models.TextField(null=True)
-    opcion_1 = models.TextField(null=True)
-    opcion_2 = models.TextField(null=True)
-    opcion_3 = models.TextField(null=True)
-    opcion_4 = models.TextField(null=True)
-    opcion_5 = models.TextField(null=True)
+    pregunta = models.TextField(null=True)
+    opciones = models.TextField(null=True)
+    lado_izq = models.CharField(max_length=255, null=True)
+    explicacion = models.TextField(null=True)
+    puntos = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'pareo'
@@ -438,3 +428,25 @@ class InfoProfe(models.Model):
     class Meta:
         managed = False
         db_table = 'est_profe2'
+
+
+class Actividades(models.Model):
+    id_mol = models.ForeignKey(Modulos, on_delete=models.CASCADE, db_column='id_mol')
+    titulo = models.CharField(max_length=255, null=True)
+    leccion = models.CharField(max_length=255, null=True)
+    conceptos_claves = models.TextField(null=True)
+    objetivo = models.TextField(null=True)
+    lapso_vz = models.CharField(max_length=255, null=True)
+    lapso_mx = models.CharField(max_length=255, null=True)
+    tiempo = models.CharField(max_length=255, null=True)
+    preparacion = models.TextField(null=True)
+    materiales = models.TextField(null=True)
+    resumen = models.TextField(null=True)
+    descripcion = models.TextField(null=True)
+    imagen_descriptiva = models.CharField(max_length=255, null=True)
+    modalidad = models.CharField(max_length=255, null=True)
+    tipo_actividad = models.CharField(max_length=255, null=True)
+    competencias = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'actividades'

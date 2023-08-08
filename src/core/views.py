@@ -211,6 +211,7 @@ class IdProfeFilter(filters.FilterSet):
         model = InfoProfe
         fields = ["id_profe"]
 
+
 class InfoProfeView(ListAPIView):
     serializer_class = InfoProfeSerializer
     filter_backends = [filters.DjangoFilterBackend]
@@ -219,3 +220,181 @@ class InfoProfeView(ListAPIView):
     def get_queryset(self):
         queryset = InfoProfe.objects.all().distinct('id_profe')
         return queryset
+    
+
+static_data_primera = [
+    {
+        "id_profe" : 3000003,
+        "grados": 
+        [
+            {
+                "uuid_salon": "4db75127-2eca-49ae-9df7-9d38a7b044b7",
+                "grado": "1er año",
+                "seccion": "A",
+                "per_completado": "52%",
+            },
+            {
+                "uuid_salon": "1cc8c31d-cb4f-4d2a-9861-4f2194e3adc0",
+                "grado": "2do año",
+                "seccion": "A",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "1dba069b-a779-4000-a0c3-750017d323ba",
+                "grado": "3er año",
+                "seccion": "A",
+                "per_completado": "69%",
+            }
+        ]
+    },
+    {
+        "id_profe" : 3000008,
+        "grados": 
+        [
+            {
+                "uuid_salon": "7558864d-484c-4adf-8a98-22abb2414af0",
+                "grado": "2do año",
+                "seccion": "A",
+                "per_completado": "59%",
+            },
+            {
+                "uuid_salon": "58bb439d-2ff6-4ce0-b92d-dd3901857cd5",
+                "grado": "3er año",
+                "seccion": "A",
+                "per_completado": "57%",
+            }
+        ]
+    },
+    {
+        "id_profe" : 3000015,
+        "grados": 
+        [
+            {
+                "uuid_salon": "741debe8-b961-4109-9113-019ec8789957",
+                "grado": "3er año",
+                "seccion": "A",
+                "per_completado": "52%",
+            },
+            {
+                "uuid_salon": "02d0ba97-66a2-4e21-ad87-1e6e54c064fe",
+                "grado": "3er año",
+                "seccion": "B",
+                "per_completado": "65%",
+            },
+            {
+                "uuid_salon": "377e1d24-c5a8-45ed-908e-7bffd0c627cc",
+                "grado": "3er año",
+                "seccion": "C",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "f064ab59-7d60-420a-acfd-8264e12bec5e",
+                "grado": "3er año",
+                "seccion": "N",
+                "per_completado": "91%",
+            },
+            {
+                "uuid_salon": "08db0ab3-63a6-446a-9c52-e21af8641134",
+                "grado": "4to año",
+                "seccion": "A",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "e8746dba-406a-409a-ab1e-76889a9178cc",
+                "grado": "4to año",
+                "seccion": "D",
+                "per_completado": "22%",
+            },
+            {
+                "uuid_salon": "7d93149c-3d6d-4db0-80bf-03d3985f473e",
+                "grado": "4to año",
+                "seccion": "N",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "7f10002d-b5ef-443a-b59c-17c28086baa3",
+                "grado": "5to año",
+                "seccion": "A",
+                "per_completado": "16%",
+            },
+            {
+                "uuid_salon": "0ddd2e48-7951-4680-bbb7-b134a3104fe5",
+                "grado": "5to año",
+                "seccion": "N",
+                "per_completado": "72%",
+            }
+        ]
+    },
+    {
+        "id_profe" : 3000016,
+        "grados": 
+        [
+            {
+                "uuid_salon": "57eed45f-46d2-46ee-bc23-a51e4e9530af",
+                "grado": "1er año",
+                "seccion": "A",
+                "per_completado": "95%",
+            },
+            {
+                "uuid_salon": "bbccc264-aec8-4684-b3c5-5ebf382d3a67",
+                "grado": "1er año",
+                "seccion": "B",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "19fe7f23-f550-4b8d-ad85-4012591e5818",
+                "grado": "4to año",
+                "seccion": "A",
+                "per_completado": "49%",
+            },
+            {
+                "uuid_salon": "2fbb26a6-98a9-46ff-8b0d-dc349a5e7e77",
+                "grado": "4to año",
+                "seccion": "B",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "c038ec17-1f83-498d-b174-138a9d8018f8",
+                "grado": "5to año",
+                "seccion": "A",
+                "per_completado": "21%",
+            },
+            {
+                "uuid_salon": "9a142bb6-6330-4ff5-8a45-ac2754a0fa65",
+                "grado": "5to año",
+                "seccion": "B",
+                "per_completado": "15%",
+            },
+            {
+                "uuid_salon": "50ece3fc-e768-459d-9e91-f1e76a3c8459",
+                "grado": "1er año",
+                "seccion": "N",
+                "per_completado": "32%",
+            },
+            {
+                "uuid_salon": "80ff5186-bd99-4266-8692-bf33f9493711",
+                "grado": "2do año",
+                "seccion": "N",
+                "per_completado": "45%",
+            },
+            {
+                "uuid_salon": "10826305-aa44-453f-9635-ce9848e2ed6a",
+                "grado": "5to año",
+                "seccion": "N",
+                "per_completado": "53%",
+            }
+        ]
+    }
+]
+
+class ProgresoView(APIView):
+    def get(self, request, *args, **kwargs):
+        id_profe = request.query_params.get('id_profe')
+
+        if id_profe:
+            filtered_data = [item for item in static_data_primera if item['id_profe'] == int(id_profe)]
+            return Response(filtered_data)
+        else:
+            return Response(static_data_primera)
+        
+
