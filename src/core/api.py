@@ -24,7 +24,8 @@ from .models import (ColegioTabla,
                      # SalonInfoProfe,
                      EstProfe,
                      EstatusGeneral,
-                     SalonKpiModulo
+                     SalonKpiModulo,
+                     Actividades
                      )
 from .serializers import (ColegioTablaSerializer, 
                           SalonTablaSerializer,
@@ -43,7 +44,8 @@ from .serializers import (ColegioTablaSerializer,
                           # SalonInfoProfeSerializer,
                           EstProfeSerializer,
                           EstatusGeneralSerializer,
-                          SalonKpiModuloSerializer
+                          SalonKpiModuloSerializer,
+                          ActividadesSerializer
                           )
 
 
@@ -844,6 +846,84 @@ class JerarquiumViewSet(viewsets.ModelViewSet):
                     '^id_coordinador',
                     '^id_profe',
                     '^id_representante'
+                    ]
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        fields = request.query_params.get('fields', None)
+        
+        if fields is None:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+                
+        fields_list = fields.split(',')
+
+        filter_field = None
+        filter_value = None
+        for field in self.filterset_fields:
+            value = request.query_params.get(field)
+            if value is not None:
+                filter_field = field
+                filter_value = value
+                break
+
+        if filter_field is not None and filter_value is not None:
+            queryset = queryset.filter(**{filter_field: filter_value})
+
+        response_list = []
+        for item in queryset:
+            item_dict = {}
+            for field in fields_list:
+                if hasattr(item, field):
+                    item_dict[field] = getattr(item, field)
+            response_list.append(item_dict)
+
+        return Response(response_list)
+    
+
+class ActividadesViewSet(viewsets.ModelViewSet):
+    queryset = Actividades.objects.all()
+    # authentication_classes = [SessionAuthentication]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    serializer_class = ActividadesSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    http_method_names = ['get']
+    filterset_fields = [
+                        'id_mol',
+                        'titulo',
+                        'leccion',
+                        'conceptos_claves',
+                        'objetivo',
+                        'lapso_vz',
+                        'lapso_mx',
+                        'tiempo',
+                        'preparacion',
+                        'materiales',
+                        'resumen',
+                        'descripcion',
+                        'imagen_descriptiva',
+                        'modalidad',
+                        'tipo_actividad',
+                        'competencias'
+                        ]
+    search_fields = [
+                    '^id_mol',
+                    '^titulo',
+                    '^leccion',
+                    '^conceptos_claves',
+                    '^objetivo',
+                    '^lapso_vz',
+                    '^lapso_mx',
+                    '^tiempo',
+                    '^preparacion',
+                    '^materiales',
+                    '^resumen',
+                    '^descripcion',
+                    '^imagen_descriptiva',
+                    '^modalidad',
+                    '^tipo_actividad',
+                    '^competencias'
                     ]
     
     def list(self, request, *args, **kwargs):

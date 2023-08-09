@@ -19,7 +19,7 @@ from .models import (ColegioTabla,
                      Feedback,
                      Monitoreo,
                      Jerarquium,
-                     SalonInfoProfe,
+                     Actividades,
                      EstProfe,
                      EstatusGeneral,
                      SalonKpiModulo,
@@ -226,6 +226,13 @@ class MonitoreoSerializer(serializers.ModelSerializer):
 class JerarquiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Jerarquium
+        fields = '__all__'
+
+
+
+class ActividadesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actividades
         fields = '__all__'
 
 
