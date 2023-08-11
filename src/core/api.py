@@ -324,12 +324,12 @@ class ValuThinkificViewSet(viewsets.ModelViewSet):
 
 
 class EstatusThinkificViewSet(viewsets.ModelViewSet):
-    queryset = EstatusThinkific.objects.all()
+    queryset = EstatusThinkific.objects.filter(deleted=False)
     # authentication_classes = [SessionAuthentication]
     permission_classes = [AllowAny]
     serializer_class = EstatusThinkificSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    http_method_names = ['get', 'post', 'patch']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     filterset_fields = [
                         'id_t',
                         'id_thinkific', 
@@ -379,6 +379,13 @@ class EstatusThinkificViewSet(viewsets.ModelViewSet):
                     '^nota_total',
                     '^nota_total_l'
                     ]
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.deleted = True
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         fields = request.query_params.get('fields', None)
@@ -413,7 +420,7 @@ class EstatusThinkificViewSet(viewsets.ModelViewSet):
 
 
 class EstatusValuViewSet(viewsets.ModelViewSet):
-    queryset = EstatusValu.objects.all()
+    queryset = EstatusValu.objects.filter(deleted=False)
     # authentication_classes = [SessionAuthentication]
     # permission_classes = [IsAuthenticated]
     permission_classes = [AllowAny]

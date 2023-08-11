@@ -1,37 +1,48 @@
-from django.contrib.auth import authenticate, login, logout
-from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from .serializers import UserSerializer
+from dj_rest_auth.views import LoginView
+from core.models import Usuarios
+
+class CustomLoginView(LoginView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        if self.user:
+            usuario = Usuarios.objects.get(email=self.user.email)
+            id_v = usuario.id_v
+            response.data['id_v'] = id_v
+
+        return response
+
+# from django.contrib.auth import authenticate, login, logout
+# from rest_framework import generics, status
+# from rest_framework.response import Response
+# from rest_framework.views import APIView
+# from .serializers import UserSerializer
 
 
-class LoginView(APIView):
-    def post(self, request):
-        # Recuperamos las credenciales y autenticamos al usuario
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
-        user = authenticate(email=email, password=password)
+# class LoginView(APIView):
+#     def post(self, request):
 
-        # Si es correcto añadimos a la request la información de sesión
-        if user:
-            login(request, user)
-            return Response(
-                UserSerializer(user).data,
-                status=status.HTTP_200_OK)
+#         email = request.data.get('email', None)
+#         password = request.data.get('password', None)
+#         user = authenticate(email=email, password=password)
 
-        # Si no es correcto devolvemos un error en la petición
-        return Response(
-            status=status.HTTP_404_NOT_FOUND)
+#         if user:
+#             login(request, user)
+#             return Response(
+#                 UserSerializer(user).data,
+#                 status=status.HTTP_200_OK)
+
+#         return Response(
+#             status=status.HTTP_404_NOT_FOUND)
 
 
-class LogoutView(APIView):
-    def post(self, request):
-        # Borramos de la request la información de sesión
-        logout(request)
+# class LogoutView(APIView):
+#     def post(self, request):
+#         logout(request)
 
-        # Devolvemos la respuesta al cliente
-        return Response(status=status.HTTP_200_OK)
+#         return Response(status=status.HTTP_200_OK)
     
 
-class SignupView(generics.CreateAPIView):
-    serializer_class = UserSerializer
+# class SignupView(generics.CreateAPIView):
+#     serializer_class = UserSerializer

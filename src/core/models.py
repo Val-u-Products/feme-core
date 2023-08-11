@@ -93,9 +93,18 @@ class EstatusThinkific(models.Model):
     nota_total = models.IntegerField()
     nota_total_l = models.CharField(max_length=255)
     e_acceso = models.BooleanField(default=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'estatus_thinkific'
+
+    def delete(self, using=None, keep_parents=False):
+        self.deleted = True
+        self.save()
+
+    def restore(self):
+        self.deleted = False
+        self.save()
 
 
 class EstatusValu(models.Model):
@@ -123,9 +132,18 @@ class EstatusValu(models.Model):
     nota_total = models.IntegerField()
     nota_total_l = models.CharField(max_length=255)
     e_acceso = models.BooleanField(default=True)
+    deleted = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'estatus_valu'
+
+    def delete(self, using=None, keep_parents=False):
+        self.deleted = True
+        self.save()
+
+    def restore(self):
+        self.deleted = False
+        self.save()
 
 
 class Modulos(models.Model):
@@ -229,10 +247,11 @@ class Pareo(models.Model):
 
 
 class Feedback(models.Model):
-    id_f = models.IntegerField(primary_key=True, unique=True)
+    # id_f = models.IntegerField(primary_key=True, unique=True)
+    id_f = models.AutoField(primary_key=True, unique=True)
     id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
-    feedback = models.CharField(max_length=255)
-    errores = models.CharField(max_length=255)
+    feedback = models.CharField(max_length=255, null=True)
+    errores = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'feedback'
