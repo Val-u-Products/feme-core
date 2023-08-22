@@ -8,6 +8,7 @@ class ColegioTabla(models.Model):
     ubicacion = models.CharField(max_length=255)
     zona_horaria = models.CharField(max_length=255)
     sexo_colegio = models.CharField(max_length=255)
+    pais = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'colegio_tabla'
@@ -18,7 +19,8 @@ class SalonTabla(models.Model):
     cierre_definitivo = models.DateTimeField(default=timezone.now, null=True)
     per_puntaje = models.IntegerField(null=True)
     materia_feme = models.CharField(max_length=255, null=True)
-    s_acceso = models.BooleanField(default=True)
+    s_acceso = models.BooleanField(default=False)
+    cv = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'salon_tabla'
@@ -217,6 +219,7 @@ class SeleccionTodas(models.Model):
     pregunta = models.TextField(null=True)
     explicacion = models.TextField(null=True)
     puntos = models.IntegerField(null=True)
+    correcta = models.TextField(null=True)
 
     class Meta:
         db_table = 'seleccion_todas'
@@ -278,6 +281,27 @@ class Jerarquium(models.Model):
 
     class Meta:
         db_table = 'jerarquia'
+
+
+class ActividadesCurriculum(models.Model):
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont')
+    grado = models.CharField(max_length=255, null=True)
+    titulo = models.TextField(null=True)
+    curriculo = models.CharField(max_length=255, null=True)
+    leccion = models.TextField(null=True)
+    conceptos_claves = models.TextField(null=True)
+    objetivos = models.TextField(null=True)
+    tiempo = models.CharField(max_length=255, null=True)
+    preparacion = models.TextField(null=True)
+    materiales = models.TextField(null=True)
+    resumen = models.TextField(null=True)
+    descripcion = models.TextField(null=True)
+    imagen_descriptiva = models.TextField(null=True)
+    tipo_actividad = models.CharField(max_length=255, null=True)
+    modalidad = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = 'actividades_curriculum'
 
 
 class JProfeEst(models.Model):
@@ -469,3 +493,60 @@ class Actividades(models.Model):
 
     class Meta:
         db_table = 'actividades'
+
+
+class ActividadSiguiente(models.Model):
+    id_profe = models.IntegerField()
+    uuid_salon = models.CharField(primary_key=True, max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    contenido = models.TextField(null=True)
+    titulo = models.TextField(null=True)
+    fecha_siguiente_semana = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'actividad_siguiente'
+
+
+class ActividadSemanalEstudiantes(models.Model):
+    id_profe = models.IntegerField()
+    uuid_salon = models.CharField(primary_key=True, max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    numero_estudiantes = models.IntegerField()
+    lecciones_completadas = models.BigIntegerField()
+    porcentaje_lecciones_completadas = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'actividad_semanal_estudiantes'
+
+
+class ActividadCvProfe(models.Model):
+    fecha_recom = models.DateTimeField(auto_now_add=True)
+    id_mol = models.CharField(max_length=255)
+    pais = models.CharField(max_length=255)
+    id_profe = models.IntegerField()
+    uuid_salon = models.CharField(primary_key=True, max_length=255)
+    grado = models.CharField(max_length=255)
+    seccion = models.CharField(max_length=255)
+    colegio = models.CharField(max_length=255)
+    cv = models.CharField(max_length=255)
+    id_cont = models.CharField(max_length=255)
+    titulo = models.TextField(null=True)
+    leccion = models.TextField(null=True)
+    conceptos_claves = models.TextField(null=True)
+    objetivos = models.TextField(null=True)
+    tiempo = models.CharField(max_length=255)
+    preparacion = models.TextField(null=True)
+    materiales = models.TextField(null=True)
+    resumen = models.TextField(null=True)
+    descripcion = models.TextField(null=True)
+    imagen_descriptiva = models.TextField(null=True)
+    tipo_actividad = models.CharField(max_length=255)
+    modalidad = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'actividad_cv_profe'

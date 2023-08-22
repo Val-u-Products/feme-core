@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework import routers # new line
 router = routers.DefaultRouter() # new line
-from core.views import LoginAPIView, SalonInfoProfeAPIView, TopStudentsAPIView, InfoProfeView, ProgresoView, ProgresoDataView
+from core.views import LoginAPIView, SalonInfoProfeAPIView, TopStudentsAPIView, InfoProfeView, ProgresoView, ProgresoDataView, CustomJSONView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,5 +41,6 @@ urlpatterns = [
     path('top_students/', TopStudentsAPIView.as_view(), name='top_students'),
     path('info-profe/', InfoProfeView.as_view(), name='info-profe-view'),
     path('progreso/', ProgresoView.as_view(), name='progreso-list'),
-    path('progreso-data/', ProgresoDataView.as_view(), name='progreso-data-list')
+    path('progreso-data/', ProgresoDataView.as_view(), name='progreso-data-list'),
+    path('actividades-tipos/<str:uuid_salon>/', CustomJSONView.as_view(), name='actividades-tipos'),
 ]

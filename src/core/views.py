@@ -10,9 +10,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe
+from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente
 from .serializers import LoginSerializer, InfoProfeSerializer
-
+from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.db.models import Max, Min
@@ -388,6 +388,7 @@ static_data_primera = [
     }
 ]
 
+
 class ProgresoView(APIView):
     def get(self, request, *args, **kwargs):
         id_profe = request.query_params.get('id_profe')
@@ -676,6 +677,7 @@ static_data_segunda = [
     }
 ]
 
+
 class ProgresoDataView(APIView):
     def get_object_by_id_profe(self, id_profe):
         try:
@@ -708,3 +710,61 @@ class ProgresoDataView(APIView):
             return Response(data)
         else:
             return Response(static_data_segunda)
+
+
+class CustomJSONView(APIView):
+    def get(self, request, uuid_salon):
+        data = {
+            "uuid_salon": uuid_salon,
+            "id_profe": "",
+            "grado": "",
+            "seccion": "",
+            "actividades": [],
+        }
+
+        actividad_siguiente = get_object_or_404(ActividadSiguiente, uuid_salon=uuid_salon)
+        data["id_profe"] = actividad_siguiente.id_profe
+        data["grado"] = actividad_siguiente.grado
+        data["seccion"] = actividad_siguiente.seccion
+        data["actividades"].append({
+            "actividad_siguiente": [{
+                "contenido": actividad_siguiente.contenido,
+                "titulo": actividad_siguiente.titulo,
+                "fecha_siguiente_semana": actividad_siguiente.fecha_siguiente_semana
+            }],
+            "actividad_semanal_estudiantes": [],
+            "actividad_cv_profe": [],
+        })
+
+        actividad_semanal_estudiantes = ActividadSemanalEstudiantes.objects.filter(uuid_salon=uuid_salon)
+        for actividad in actividad_semanal_estudiantes:
+            data["actividades"][0]["actividad_semanal_estudiantes"].append({
+                "numero_estudiantes": actividad.numero_estudiantes,
+                "lecciones_completadas": actividad.lecciones_completadas,
+                "porcentaje_lecciones_completadas": actividad.porcentaje_lecciones_completadas
+            })
+
+        actividad_cv_profe = ActividadCvProfe.objects.filter(uuid_salon=uuid_salon)
+        for actividad in actividad_cv_profe:
+            data["actividades"][0]["actividad_cv_profe"].append({
+                "fecha_recom": actividad.fecha_recom,
+                "id_mol": actividad.id_mol,
+                "pais": actividad.pais,
+                "colegio": actividad.colegio,
+                "cv": actividad.cv,
+                "id_cont": actividad.id_cont,
+                "titulo": actividad.titulo,
+                "leccion": actividad.leccion,
+                "conceptos_clave": actividad.conceptos_claves,
+                "objetivos": actividad.objetivos,
+                "tiempo": actividad.tiempo,
+                "preparacion": actividad.preparacion,
+                "materiales": actividad.materiales,
+                "resumen": actividad.resumen,
+                "descripcion": actividad.descripcion,
+                "imagen_descriptiva": actividad.imagen_descriptiva,
+                "tipo_actividad": actividad.tipo_actividad,
+                "modalidad": actividad.modalidad
+            })
+
+        return Response(data)
