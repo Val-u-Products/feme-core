@@ -7,10 +7,11 @@
 # from rest_framework import status
 # from .models import MonitorTabla
 # from .serializers import UserSerializer
+from itertools import groupby
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente
+from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente, Respuestas
 from .serializers import LoginSerializer, InfoProfeSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -768,3 +769,53 @@ class CustomJSONView(APIView):
             })
 
         return Response(data)
+
+
+class RespuestasEndpoint(APIView):
+    def get(self, request):
+        modulo = request.query_params.get('modulo', None)
+        edad = request.query_params.get('edad', None)
+        
+        respuestas = Respuestas.objects.order_by('modulos', 'edad', 'numero_quiz')
+
+        if modulo is not None:
+            respuestas = respuestas.filter(modulos=modulo)
+
+        if edad is not None:
+            respuestas = respuestas.filter(edad=edad)
+
+        grouped_data = []
+        current_modulo = None
+        current_edad = None
+        contenido = []
+
+        for respuesta in respuestas:
+            if respuesta.modulos != current_modulo or respuesta.edad != current_edad:
+                if current_modulo is not None:
+                    grouped_data.append({
+                        "modulo": current_modulo,
+                        "edad": current_edad,
+                        "contenido": contenido
+                    })
+
+                current_modulo = respuesta.modulos
+                current_edad = respuesta.edad
+                contenido = []
+
+            contenido.append({
+                "numero_quiz": respuesta.numero_quiz,
+                "nivel": respuesta.nivel,
+                "preguntas": respuesta.preguntas,
+                "respuesta_correcta": respuesta.respuesta_correcta,
+                "explicacion": respuesta.explicacion
+            })
+
+        if current_modulo is not None:
+            grouped_data.append({
+                "modulo": current_modulo,
+                "edad": current_edad,
+                "contenido": contenido
+            })
+
+        return Response(grouped_data)
+    

@@ -550,3 +550,17 @@ class ActividadCvProfe(models.Model):
     class Meta:
         managed = False
         db_table = 'actividad_cv_profe'
+
+
+class Respuestas(models.Model):
+    numero_quiz = models.IntegerField()
+    modulos = models.CharField(primary_key=True, max_length=255)
+    nivel = models.TextField(null=True)
+    edad = models.TextField(null=True)
+    preguntas = models.TextField(null=True)
+    respuesta_correcta = models.TextField(null=True)
+    explicacion = models.TextField(null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'respuestas'
