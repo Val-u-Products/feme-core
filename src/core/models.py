@@ -553,6 +553,7 @@ class ActividadCvProfe(models.Model):
 
 
 class Respuestas(models.Model):
+    salon = models.CharField(max_length=255)
     numero_quiz = models.IntegerField()
     modulos = models.CharField(primary_key=True, max_length=255)
     nivel = models.TextField(null=True)

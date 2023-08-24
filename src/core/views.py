@@ -771,51 +771,127 @@ class CustomJSONView(APIView):
         return Response(data)
 
 
+# class RespuestasEndpoint(APIView):
+#     def get(self, request):
+#         modulo = request.query_params.get('modulo', None)
+#         edad = request.query_params.get('edad', None)
+        
+#         respuestas = Respuestas.objects.order_by('modulos', 'edad', 'numero_quiz')
+
+#         if modulo is not None:
+#             respuestas = respuestas.filter(modulos=modulo)
+
+#         if edad is not None:
+#             respuestas = respuestas.filter(edad=edad)
+
+#         grouped_data = []
+#         current_modulo = None
+#         current_edad = None
+#         contenido = []
+
+#         for respuesta in respuestas:
+#             if respuesta.modulos != current_modulo or respuesta.edad != current_edad:
+#                 if current_modulo is not None:
+#                     grouped_data.append({
+#                         "modulo": current_modulo,
+#                         "edad": current_edad,
+#                         "contenido": contenido
+#                     })
+
+#                 current_modulo = respuesta.modulos
+#                 current_edad = respuesta.edad
+#                 contenido = []
+
+#             contenido.append({
+#                 "numero_quiz": respuesta.numero_quiz,
+#                 "nivel": respuesta.nivel,
+#                 "preguntas": respuesta.preguntas,
+#                 "respuesta_correcta": respuesta.respuesta_correcta,
+#                 "explicacion": respuesta.explicacion
+#             })
+
+#         if current_modulo is not None:
+#             grouped_data.append({
+#                 "modulo": current_modulo,
+#                 "edad": current_edad,
+#                 "contenido": contenido
+#             })
+
+#         return Response(grouped_data)
+    
 class RespuestasEndpoint(APIView):
     def get(self, request):
-        modulo = request.query_params.get('modulo', None)
-        edad = request.query_params.get('edad', None)
-        
-        respuestas = Respuestas.objects.order_by('modulos', 'edad', 'numero_quiz')
+        salon_filter = request.query_params.get('salon')
 
-        if modulo is not None:
-            respuestas = respuestas.filter(modulos=modulo)
+        respuestas = Respuestas.objects.order_by('salon', 'modulos', 'edad', 'nivel', 'numero_quiz')
 
-        if edad is not None:
-            respuestas = respuestas.filter(edad=edad)
+        if salon_filter:
+            respuestas = respuestas.filter(salon=salon_filter)
 
         grouped_data = []
+        current_salon = None
         current_modulo = None
         current_edad = None
-        contenido = []
+        current_nivel = None
+        current_numero_quiz = None
+        contenido_salon = []
 
         for respuesta in respuestas:
-            if respuesta.modulos != current_modulo or respuesta.edad != current_edad:
-                if current_modulo is not None:
-                    grouped_data.append({
+            if (respuesta.salon != current_salon or respuesta.modulos != current_modulo or
+                respuesta.edad != current_edad or respuesta.nivel != current_nivel):
+
+                if current_salon is not None:
+                    contenido_salon.append({
                         "modulo": current_modulo,
                         "edad": current_edad,
-                        "contenido": contenido
+                        "nivel": current_nivel,
+                        "contenido_modulo": contenido_modulo
                     })
+
+                if current_salon != respuesta.salon:
+                    if current_salon is not None:
+                        grouped_data.append({
+                            "uuid_salon": current_salon,
+                            "contenido_salon": contenido_salon
+                        })
+                    current_salon = respuesta.salon
+                    contenido_salon = []
 
                 current_modulo = respuesta.modulos
                 current_edad = respuesta.edad
-                contenido = []
+                current_nivel = respuesta.nivel
+                contenido_modulo = []
 
-            contenido.append({
-                "numero_quiz": respuesta.numero_quiz,
-                "nivel": respuesta.nivel,
+            if respuesta.numero_quiz != current_numero_quiz:
+                if current_numero_quiz is not None:
+                    contenido_modulo.append({
+                        "numero_quiz": current_numero_quiz,
+                        "contenido_quiz": contenido_quiz
+                    })
+                current_numero_quiz = respuesta.numero_quiz
+                contenido_quiz = []
+
+            contenido_quiz.append({
                 "preguntas": respuesta.preguntas,
                 "respuesta_correcta": respuesta.respuesta_correcta,
                 "explicacion": respuesta.explicacion
             })
 
-        if current_modulo is not None:
-            grouped_data.append({
+        if current_salon is not None:
+            contenido_modulo.append({
+                "numero_quiz": current_numero_quiz,
+                "contenido_quiz": contenido_quiz
+            })
+            contenido_salon.append({
                 "modulo": current_modulo,
                 "edad": current_edad,
-                "contenido": contenido
+                "nivel": current_nivel,
+                "contenido_modulo": contenido_modulo
+            })
+            grouped_data.append({
+                "uuid_salon": current_salon,
+                "contenido_salon": contenido_salon
             })
 
         return Response(grouped_data)
-    
+        
