@@ -506,7 +506,7 @@ class ActividadSiguiente(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'actividad_siguiente'
+        db_table = 'leccion_siguiente'
 
 
 class ActividadSemanalEstudiantes(models.Model):
@@ -520,7 +520,7 @@ class ActividadSemanalEstudiantes(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'actividad_semanal_estudiantes'
+        db_table = 'leccion_semanal_estudiantes'
 
 
 class ActividadCvProfe(models.Model):
