@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status
 from rest_framework.response import Response
 from collections import defaultdict
+from rest_framework.authentication import TokenAuthentication
 
 from .models import (ColegioTabla, 
                      SalonTabla,
@@ -51,8 +52,10 @@ from .serializers import (ColegioTablaSerializer,
 
 class ColegioTablaViewSet(viewsets.ModelViewSet):
     queryset = ColegioTabla.objects.all()
+    authentication_classes = [TokenAuthentication]  # Requiere autenticación con token
+    permission_classes = [IsAuthenticated]
     # authentication_classes = [SessionAuthentication]
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     serializer_class = ColegioTablaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     http_method_names = ['get', 'post', 'patch']
@@ -235,6 +238,20 @@ class UsuariosViewSet(viewsets.ModelViewSet):
                     '^inscrito'
                     ]
     
+    def get_queryset(self):
+        queryset = Usuarios.objects.filter(deleted=False)
+        return queryset
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        salones = instance.get_salones()
+        salon_serializer = SalonKpiModuloSerializer(salones, many=True)
+        response_data = serializer.data
+        response_data['salones'] = salon_serializer.data
+        return Response(response_data)
+
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.deleted = True

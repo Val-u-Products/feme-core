@@ -54,6 +54,10 @@ class Usuarios(models.Model):
     class Meta:
         db_table = 'users'
 
+    def get_salones(self):
+        salones = SalonKpiModulo.objects.filter(id_profe=self.id_v)
+        return salones
+
     def delete(self, using=None, keep_parents=False):
         self.deleted = True
         self.save()
@@ -304,6 +308,18 @@ class ActividadesCurriculum(models.Model):
         db_table = 'actividades_curriculum'
 
 
+class Interactivo(models.Model):
+    id_cont = models.ForeignKey(ModuloContenido, on_delete=models.CASCADE, db_column='id_cont')
+    id_escena = models.CharField(max_length=255, null=True)
+    id_escena_siguiente = models.CharField(max_length=255, null=True)
+    contenido = models.TextField(null=True)
+    imagen = models.CharField(max_length=255, null=True)
+    valor = models.TextField(null=True)
+
+    class Meta:
+        db_table = 'interactivo'
+
+
 class JProfeEst(models.Model):
     id_v = models.IntegerField()
     colegio = models.CharField(max_length=255)
@@ -424,6 +440,7 @@ class SalonKpiModulo(models.Model):
     modulo = models.CharField(max_length=255)
     nombre_monitor = models.CharField(max_length=255)
     apellido_monitor = models.CharField(max_length=255)
+    id_profe = models.IntegerField()
 
     class Meta:
         managed = False

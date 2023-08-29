@@ -45,7 +45,21 @@ class RolSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SalonKpiModuloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalonKpiModulo
+        fields = ['uuid_salon']
+
+
+class SalonKpiModulo2Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalonKpiModulo
+        fields = '__all__'
+
+
 class UsuariosSerializer(serializers.ModelSerializer):
+    salones = SalonKpiModulo2Serializer(source='get_salones', many=True, read_only=True) # new line
+
     class Meta:
         model = Usuarios
         fields = '__all__'
@@ -254,10 +268,7 @@ class EstatusGeneralSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SalonKpiModuloSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SalonKpiModulo
-        fields = '__all__'
+
 
 
 class SalonSerializer(serializers.Serializer):
