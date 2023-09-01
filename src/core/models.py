@@ -1,5 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.db.models import Max, F
+from django.core.validators import MaxValueValidator
 
 
 class ColegioTabla(models.Model):
@@ -117,28 +121,29 @@ class EstatusValu(models.Model):
     id_ev = models.IntegerField(primary_key=True, unique=True)
     id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
     modulo = models.CharField(max_length=255)
-    started_at = models.DateTimeField(default=timezone.now)
-    activated_at = models.DateTimeField(default=timezone.now)
-    expirated_at = models.DateTimeField(default=timezone.now)
-    completed_at = models.DateTimeField(default=timezone.now, null=True)
-    per_completacion = models.IntegerField()
-    per_videos = models.IntegerField()
+    started_at = models.DateTimeField(null=True)
+    activated_at = models.DateTimeField(default=timezone.now, null=True)
+    expirated_at = models.DateTimeField(null=True)
+    completed_at = models.DateTimeField(null=True)
+    per_completacion = models.IntegerField(null=True)
+    per_videos = models.IntegerField(null=True)
     estatus = models.CharField(max_length=255)
-    created_at = models.DateTimeField()
-    last_sign_in = models.DateTimeField(default=timezone.now)
-    nota_quiz1 = models.FloatField()
+    created_at = models.DateTimeField(default=timezone.now, null=True)
+    last_sign_in = models.DateTimeField(null=True)
+    nota_quiz1 = models.FloatField(null=True)
     intento_quiz1 = models.IntegerField(null=True)
-    nota_quiz2 = models.FloatField()
+    nota_quiz2 = models.FloatField(null=True)
     intento_quiz2 = models.IntegerField(null=True)
-    nota_quiz3 = models.FloatField()
+    nota_quiz3 = models.FloatField(null=True)
     intento_quiz3 = models.IntegerField(null=True)
-    fecha_q1 = models.DateTimeField(default=timezone.now, null=True)
-    fecha_q2 = models.DateTimeField(default=timezone.now, null=True)
-    fecha_q3 = models.DateTimeField(default=timezone.now, null=True)
-    nota_total = models.IntegerField()
+    fecha_q1 = models.DateTimeField(null=True)
+    fecha_q2 = models.DateTimeField(null=True)
+    fecha_q3 = models.DateTimeField(null=True)
+    nota_total = models.IntegerField(null=True)
     nota_total_l = models.CharField(max_length=255)
     e_acceso = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
+    leccion_completada = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'estatus_valu'
@@ -315,9 +320,46 @@ class Interactivo(models.Model):
     contenido = models.TextField(null=True)
     imagen = models.CharField(max_length=255, null=True)
     valor = models.TextField(null=True)
+    tipo = models.CharField(max_length=1)
 
     class Meta:
         db_table = 'interactivo'
+
+
+class Quiz1(models.Model):
+    id_v = models.IntegerField(null=True)
+    nota_quiz = models.FloatField()
+    fecha_q = models.DateTimeField()
+    intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
+    intento_extra = models.IntegerField(null=True)
+    intento_t = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'quiz_1'
+
+
+class Quiz2(models.Model):
+    id_v = models.IntegerField(null=True)
+    nota_quiz = models.FloatField()
+    fecha_q = models.DateTimeField()
+    intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
+    intento_extra = models.IntegerField(null=True)
+    intento_t = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'quiz_2'
+
+
+class Quiz3(models.Model):
+    id_v = models.IntegerField(null=True)
+    nota_quiz = models.FloatField()
+    fecha_q = models.DateTimeField()
+    intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
+    intento_extra = models.IntegerField(null=True)
+    intento_t = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'quiz_3'
 
 
 class JProfeEst(models.Model):
@@ -582,3 +624,36 @@ class Respuestas(models.Model):
     class Meta:
         managed = False
         db_table = 'respuestas'
+
+
+@receiver(post_save, sender=ContenidosColegio)
+def crear_registros_estatus(sender, instance, **kwargs):
+    # Obtén el valor máximo actual de id_ev
+    max_id_ev = EstatusValu.objects.aggregate(Max('id_ev'))['id_ev__max'] or 0
+    
+    usuarios_con_mismo_uuid_salon = Usuarios.objects.filter(uuid_salon=instance.uuid_salon)
+
+    for i, usuario in enumerate(usuarios_con_mismo_uuid_salon, start=1):
+        user_instance = Usuarios.objects.get(id_v=usuario.id_v)
+        modulo_nombre = instance.id_mol.nombre
+        EstatusValu.objects.create(
+            id_ev=max_id_ev + i,
+            modulo = modulo_nombre,
+            activated_at=timezone.now(),
+            per_completacion=0,
+            per_videos=0,
+            estatus='no iniciado',
+            created_at=timezone.now(),
+            nota_quiz1=0,
+            intento_quiz1=0,
+            nota_quiz2=0,
+            intento_quiz2=0,
+            nota_quiz3=0,
+            intento_quiz3=0,
+            nota_total=0,
+            nota_total_l='0',
+            e_acceso=True,
+            id_v=user_instance,
+            leccion_completada=0,
+            deleted=False
+        )
