@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import Max, F
 from django.core.validators import MaxValueValidator
+from authentication.models import CustomUser
 
 
 class ColegioTabla(models.Model):
@@ -327,9 +328,10 @@ class Interactivo(models.Model):
 
 
 class Quiz1(models.Model):
-    id_v = models.IntegerField(null=True)
+    id_ev = models.IntegerField(null=True)
     nota_quiz = models.FloatField()
-    fecha_q = models.DateTimeField()
+    inicio_q = models.DateTimeField()
+    fin_q = models.DateTimeField()
     intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
     intento_extra = models.IntegerField(null=True)
     intento_t = models.IntegerField(null=True)
@@ -339,9 +341,10 @@ class Quiz1(models.Model):
 
 
 class Quiz2(models.Model):
-    id_v = models.IntegerField(null=True)
+    id_ev = models.IntegerField(null=True)
     nota_quiz = models.FloatField()
-    fecha_q = models.DateTimeField()
+    inicio_q = models.DateTimeField()
+    fin_q = models.DateTimeField()
     intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
     intento_extra = models.IntegerField(null=True)
     intento_t = models.IntegerField(null=True)
@@ -351,9 +354,10 @@ class Quiz2(models.Model):
 
 
 class Quiz3(models.Model):
-    id_v = models.IntegerField(null=True)
+    id_ev = models.IntegerField(null=True)
     nota_quiz = models.FloatField()
-    fecha_q = models.DateTimeField()
+    inicio_q = models.DateTimeField()
+    fin_q = models.DateTimeField()
     intento_permitido = models.IntegerField(null=True, validators=[MaxValueValidator(3)])
     intento_extra = models.IntegerField(null=True)
     intento_t = models.IntegerField(null=True)
@@ -507,6 +511,8 @@ class SalonInfoProfe(models.Model):
     no_iniciaron = models.BigIntegerField()
     pendiente = models.BigIntegerField()
     id_profe = models.IntegerField()
+    id_mol = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=255)
 
     class Meta:
         managed = False

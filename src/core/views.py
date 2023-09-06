@@ -144,6 +144,8 @@ class SalonInfoProfeAPIView(APIView):
                 'no_iniciaron': registro.no_iniciaron,
                 'pendiente': registro.pendiente,
                 'total_estudiantes': registro.total_estudiantes,
+                'id_mol': registro.id_mol,
+                'nombre': registro.nombre,
             }
             grados_data.append(grado_data)
 

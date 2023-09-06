@@ -7,6 +7,7 @@ from rest_framework import filters, status
 from rest_framework.response import Response
 from collections import defaultdict
 from rest_framework.authentication import TokenAuthentication
+from authentication.models import CustomUser
 
 from .models import (ColegioTabla, 
                      SalonTabla,
@@ -256,6 +257,12 @@ class UsuariosViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.deleted = True
         instance.save()
+        try:
+            custom_user = CustomUser.objects.get(email=instance.email)
+            custom_user.is_active = False
+            custom_user.save()
+        except CustomUser.DoesNotExist:
+            pass
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     def list(self, request, *args, **kwargs):
