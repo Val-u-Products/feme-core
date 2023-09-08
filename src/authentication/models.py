@@ -6,6 +6,7 @@ class CustomUser(AbstractUser):
         max_length=150, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    is_superuser = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'  # new
 

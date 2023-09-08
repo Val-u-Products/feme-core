@@ -145,6 +145,8 @@ class EstatusValu(models.Model):
     e_acceso = models.BooleanField(default=True)
     deleted = models.BooleanField(default=False)
     leccion_completada = models.IntegerField(null=True)
+    id_certificado = models.CharField(max_length=255, null=True)
+    
 
     class Meta:
         db_table = 'estatus_valu'

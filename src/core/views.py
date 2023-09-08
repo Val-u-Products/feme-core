@@ -11,7 +11,7 @@ from itertools import groupby
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente, Respuestas
+from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente, Respuestas, EstatusValu, SalonTabla, SalonKpiModulo
 from .serializers import LoginSerializer, InfoProfeSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -20,7 +20,19 @@ from django.db.models import Max, Min
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import BaseFilterBackend
 from django_filters import rest_framework as filters
-from django.http import Http404
+from django.http import Http404, FileResponse, HttpResponse, JsonResponse
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from PIL import Image, ImageDraw, ImageFont
+import cv2
+import time
+import numpy as np
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib import colors
+import pandas as pd
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 
@@ -849,3 +861,158 @@ class RespuestasEndpoint(APIView):
 
         return Response(grouped_data)
         
+
+class DescargarCertificado(APIView):
+    def get(self, request, pk):
+        # Obtener el objeto EstatusValu por su clave primaria (pk)
+        estatus_valu = get_object_or_404(EstatusValu, pk=pk)
+
+        # Verificar si el certificado existe
+        if estatus_valu.id_certificado:
+            # Crear una imagen de fondo a partir de "template6.jpg"
+            background = cv2.imread('template6.jpg')
+            alto, ancho, _ = background.shape
+
+            # Crear una copia de la imagen de fondo
+            img = background.copy()
+
+            # Establecer el color del texto
+            light_gray = (144, 148, 151)
+            black = (0, 0, 0)
+
+            # Obtener la fecha actual en el formato deseado (por ejemplo, "2023-01-26")
+            fecha_actual = time.strftime("%Y-%m-%d", time.localtime())
+
+            # Obtener los valores de id_certificado, modulo y nombre
+            id_certificado = estatus_valu.id_certificado
+            modulo = estatus_valu.modulo
+            nombre = estatus_valu.id_v.nombres + " " + estatus_valu.id_v.apellidos
+
+
+            # Agregar texto en inglés usando cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(img, fecha_actual, (663, 141), cv2.FONT_HERSHEY_SIMPLEX, 0.7, light_gray, 1, cv2.LINE_AA)
+            cv2.putText(img, str(id_certificado), (1530, 141), cv2.FONT_HERSHEY_SIMPLEX, 0.7, light_gray, 1, cv2.LINE_AA)
+
+            # Agregar texto en chino usando una fuente personalizada en color negro y mayor grosor
+            fontpath = "./times.ttf"
+            font = ImageFont.truetype(fontpath, 38)
+            font2 = ImageFont.truetype(fontpath, 75)
+            img_pil = Image.fromarray(img)
+            draw = ImageDraw.Draw(img_pil)
+
+            chinese_text = modulo
+            chinese_text2 = nombre
+            draw.text((586, 710), chinese_text, font=font, fill=black, stroke_width=1)
+            draw.text((586, 350), chinese_text2, font=font2, fill=black, stroke_width=1)
+
+            img = np.array(img_pil)
+
+            # Guardar la imagen resultante
+            img_filename = "certificado.jpg"
+            cv2.imwrite(img_filename, img)
+
+            # Crear el PDF
+            pdf_buffer = BytesIO()
+            pdf = canvas.Canvas(pdf_buffer, pagesize=(ancho, alto))
+            pdf.drawImage(img_filename, 0, 0, width=ancho, height=alto)
+            pdf.showPage()
+            pdf.save()
+
+            # Preparar la respuesta para la descarga del PDF
+            pdf_buffer.seek(0)
+            response = FileResponse(pdf_buffer, as_attachment=True, filename='certificado.pdf')
+
+            return response
+        else:
+            return Response({"message": "Certificado no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+class GenerarReporteNotas(APIView):
+    def get(self, request, uuid_salon):
+        # Verificar si el salón existe
+        salon = get_object_or_404(SalonTabla, uuid_salon=uuid_salon)
+
+        # Obtener los registros de EstatusValu relacionados con el uuid_salon
+        estatus_valu_objects = EstatusValu.objects.filter(id_v__uuid_salon=uuid_salon)
+
+        if not estatus_valu_objects:
+            # Si no hay registros, retornar un JSON con un mensaje
+            return JsonResponse({"message": "Objeto no encontrado"}, status=404)
+
+        # Crear un PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="reporte_notas.pdf"'
+
+        # Crear un objeto SimpleDocTemplate para el PDF
+        doc = SimpleDocTemplate(response, pagesize=letter)
+
+        # Crear una lista para almacenar los datos de la tabla
+        data = [["Nombres", "Apellidos", "Grado", "Sección", "Quiz 1", "Quiz 2", "Quiz 3", "Nota Total"]]
+
+        # Iterar a través de los registros de EstatusValu
+        for estatus_valu in estatus_valu_objects:
+            # Obtener los campos necesarios de EstatusValu
+            nota_quiz1 = estatus_valu.nota_quiz1
+            nota_quiz2 = estatus_valu.nota_quiz2
+            nota_quiz3 = estatus_valu.nota_quiz3
+            nota_total = estatus_valu.nota_total
+
+            # Obtener el objeto Usuarios relacionado
+            usuario_obj = estatus_valu.id_v
+
+            # Obtener los campos necesarios de Usuarios
+            nombres = usuario_obj.nombres
+            apellidos = usuario_obj.apellidos
+            grado = usuario_obj.grado
+            seccion = usuario_obj.seccion
+
+            # Agregar los datos a la lista
+            data.append([nombres, apellidos, grado, seccion, nota_quiz1, nota_quiz2, nota_quiz3, nota_total])
+
+        # Crear una tabla con los datos
+        table = Table(data)
+
+        # Establecer el estilo de la tabla
+        style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                            ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+
+        table.setStyle(style)
+
+        # Crear un objeto Story para el PDF
+        story = []
+        story.append(table)
+
+        # Construir el PDF
+        doc.build(story)
+
+        return response
+    
+
+def generar_reporte_excel(request, id_profe):
+    # Filtrar los datos por el profesor (id_profe)
+    datos_salon = SalonKpiModulo.objects.filter(id_profe=id_profe)
+
+    # Crear un DataFrame de pandas con los datos filtrados
+    df = pd.DataFrame(list(datos_salon.values('total_estudiantes', 'estudiantes_iniciados', 'estudiantes_50', 'estudiantes_completados', 'grado', 'seccion', 'modulo')))
+
+    # Crear un nuevo libro de trabajo de Excel
+    wb = Workbook()
+    ws = wb.active
+
+    # Agregar los datos del DataFrame al libro de trabajo
+    for row in dataframe_to_rows(df, index=False, header=True):
+        ws.append(row)
+
+    # Configurar el encabezado de la respuesta HTTP
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="reporte_salon.xlsx"'
+
+    # Guardar el libro de trabajo en la respuesta HTTP
+    wb.save(response)
+
+    return response

@@ -23,7 +23,9 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework import routers # new line
 router = routers.DefaultRouter() # new line
-from core.views import LoginAPIView, SalonInfoProfeAPIView, TopStudentsAPIView, InfoProfeView, ProgresoView, ProgresoDataView, CustomJSONView, RespuestasEndpoint
+from core.views import LoginAPIView, SalonInfoProfeAPIView, TopStudentsAPIView, InfoProfeView, ProgresoView, ProgresoDataView, CustomJSONView, RespuestasEndpoint, DescargarCertificado, GenerarReporteNotas, generar_reporte_excel
+from core import views
+from authentication import views as viewss
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,5 +45,9 @@ urlpatterns = [
     path('progreso/', ProgresoView.as_view(), name='progreso-list'),
     path('progreso-data/', ProgresoDataView.as_view(), name='progreso-data-list'),
     path('actividades-tipos/<str:uuid_salon>/', CustomJSONView.as_view(), name='actividades-tipos'),
-    path('respuestas/', RespuestasEndpoint.as_view(), name='respuestas')
+    path('respuestas/', RespuestasEndpoint.as_view(), name='respuestas'),
+    path('descargar_certificado/<int:pk>/', DescargarCertificado.as_view(), name='descargar_certificado'),
+    path('generar-reporte-notas/<str:uuid_salon>/', GenerarReporteNotas.as_view(), name='generar-reporte-notas'),
+    path('generar_reporte/<int:id_profe>/', views.generar_reporte_excel, name='generar_reporte_excel'),
+    path('crear-superusuario/', viewss.create_superuser, name='crear-superusuario'),
 ]
