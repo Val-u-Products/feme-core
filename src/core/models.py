@@ -146,6 +146,7 @@ class EstatusValu(models.Model):
     deleted = models.BooleanField(default=False)
     leccion_completada = models.IntegerField(null=True)
     id_certificado = models.CharField(max_length=255, null=True)
+    id_ev_q = models.CharField(max_length=255, null=True)
     
 
     class Meta:
@@ -186,6 +187,7 @@ class ModuloContenido(models.Model):
     semana_recom = models.IntegerField(null=True)
     tipo = models.CharField(max_length=255, null=True)
     cm_acceso = models.BooleanField(default=True, null=True)
+    per_lec = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'modulo_contenido'
@@ -632,6 +634,42 @@ class Respuestas(models.Model):
     class Meta:
         managed = False
         db_table = 'respuestas'
+
+
+class EstatusValuFormato(models.Model):
+    id_ev = models.IntegerField(primary_key=True, unique=True)
+    id_v = models.ForeignKey(Usuarios, on_delete=models.CASCADE, db_column='id_v')
+    modulo = models.CharField(max_length=255)
+    started_at = models.DateTimeField(null=True)
+    activated_at = models.DateTimeField(default=timezone.now, null=True)
+    expirated_at = models.DateTimeField(null=True)
+    completed_at = models.DateTimeField(null=True)
+    per_completacion = models.IntegerField(null=True)
+    per_videos = models.IntegerField(null=True)
+    estatus = models.CharField(max_length=255)
+    created_at = models.DateTimeField(default=timezone.now, null=True)
+    last_sign_in = models.DateTimeField(null=True)
+    nota_quiz1 = models.FloatField(null=True)
+    intento_quiz1 = models.IntegerField(null=True)
+    nota_quiz2 = models.FloatField(null=True)
+    intento_quiz2 = models.IntegerField(null=True)
+    nota_quiz3 = models.FloatField(null=True)
+    intento_quiz3 = models.IntegerField(null=True)
+    fecha_q1 = models.DateTimeField(null=True)
+    fecha_q2 = models.DateTimeField(null=True)
+    fecha_q3 = models.DateTimeField(null=True)
+    nota_total = models.IntegerField(null=True)
+    nota_total_l = models.CharField(max_length=255)
+    e_acceso = models.BooleanField(default=True)
+    deleted = models.BooleanField(default=False)
+    leccion_completada = models.IntegerField(null=True)
+    id_certificado = models.CharField(max_length=255, null=True)
+    id_ev_q = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'estatus_valu_formato'
+
 
 
 @receiver(post_save, sender=ContenidosColegio)

@@ -11,7 +11,7 @@ from itertools import groupby
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente, Respuestas, EstatusValu, SalonTabla, SalonKpiModulo
+from .models import Usuarios, SalonInfoProfe, RankingEstudiantes, InfoProfe, ActividadCvProfe, ActividadSemanalEstudiantes, ActividadSiguiente, Respuestas, EstatusValu, SalonTabla, SalonKpiModulo, EstatusValuFormato
 from .serializers import LoginSerializer, InfoProfeSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -28,11 +28,14 @@ from PIL import Image, ImageDraw, ImageFont
 import cv2
 import time
 import numpy as np
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, PageBreak, Spacer, Paragraph, Image as ReportLabImage
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+import PyPDF2
+import tempfile
 
 
 
@@ -933,21 +936,47 @@ class GenerarReporteNotas(APIView):
         salon = get_object_or_404(SalonTabla, uuid_salon=uuid_salon)
 
         # Obtener los registros de EstatusValu relacionados con el uuid_salon
-        estatus_valu_objects = EstatusValu.objects.filter(id_v__uuid_salon=uuid_salon)
+        estatus_valu_objects = EstatusValuFormato.objects.filter(id_v__uuid_salon=uuid_salon)
 
         if not estatus_valu_objects:
             # Si no hay registros, retornar un JSON con un mensaje
             return JsonResponse({"message": "Objeto no encontrado"}, status=404)
 
-        # Crear un PDF
+        # Obtener el primer estudiante de la tabla
+        primer_estudiante = estatus_valu_objects.first()
+        primer_estudiante_grado = primer_estudiante.id_v.grado
+        primer_estudiante_seccion = primer_estudiante.id_v.seccion
+
+        # Obtener el nombre del colegio y el id del profesor usando uuid_salon
+        try:
+            salon_info = SalonInfoProfe.objects.get(uuid_salon=uuid_salon)
+            colegio_nombre = salon_info.colegio
+            id_profe = salon_info.id_profe
+        except SalonInfoProfe.DoesNotExist:
+            colegio_nombre = "Nombre del Colegio no encontrado"
+            id_profe = None
+
+        # Obtener el nombre y apellidos del profesor si id_profe no es None
+        nombre_profesor = ""
+        if id_profe is not None:
+            try:
+                profesor = Usuarios.objects.get(id_v=id_profe)  # Reemplaza 'Usuarios' con el nombre correcto de tu modelo de profesores
+                nombre_profesor = f"{profesor.nombres} {profesor.apellidos}"
+            except Usuarios.DoesNotExist:
+                nombre_profesor = "Nombre del Profesor no encontrado"
+
+        # Obtener el valor del campo 'modulo' del primer estudiante
+        modulo_primer_estudiante = primer_estudiante.modulo  # Asume que el campo se llama 'modulo'
+
+        # Crear un PDF con orientación horizontal y un tamaño de página personalizado
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="reporte_notas.pdf"'
 
-        # Crear un objeto SimpleDocTemplate para el PDF
-        doc = SimpleDocTemplate(response, pagesize=letter)
+        # Cambiar el tamaño de la página a un tamaño personalizado
+        doc = SimpleDocTemplate(response, pagesize=(948, 800))  # Puedes ajustar el tamaño según tus necesidades
 
         # Crear una lista para almacenar los datos de la tabla
-        data = [["Nombres", "Apellidos", "Grado", "Sección", "Quiz 1", "Quiz 2", "Quiz 3", "Nota Total"]]
+        data = [["Nombres", "Apellidos", "Quiz 1", "", "Quiz 2", "", "Quiz 3", "", "Progreso", "", "Calificación Final"]]
 
         # Iterar a través de los registros de EstatusValu
         for estatus_valu in estatus_valu_objects:
@@ -955,7 +984,16 @@ class GenerarReporteNotas(APIView):
             nota_quiz1 = estatus_valu.nota_quiz1
             nota_quiz2 = estatus_valu.nota_quiz2
             nota_quiz3 = estatus_valu.nota_quiz3
-            nota_total = estatus_valu.nota_total
+            calificacion_final = estatus_valu.nota_total
+            per_completacion = estatus_valu.per_completacion
+
+            # Calcular los valores para las columnas "Quiz 1 (20)", "Quiz 2 (20)" y "Quiz 3 (20)" con un máximo de 2 decimales
+            quiz1_20 = round(nota_quiz1 * 5, 2)
+            quiz2_20 = round(nota_quiz2 * 5, 2)
+            quiz3_20 = round(nota_quiz3 * 5, 2)
+            
+            # Calcular el valor para la columna "Progreso x 8/100"
+            progreso_x_8 = round(per_completacion * 8 / 100, 2)
 
             # Obtener el objeto Usuarios relacionado
             usuario_obj = estatus_valu.id_v
@@ -963,28 +1001,56 @@ class GenerarReporteNotas(APIView):
             # Obtener los campos necesarios de Usuarios
             nombres = usuario_obj.nombres
             apellidos = usuario_obj.apellidos
-            grado = usuario_obj.grado
-            seccion = usuario_obj.seccion
 
             # Agregar los datos a la lista
-            data.append([nombres, apellidos, grado, seccion, nota_quiz1, nota_quiz2, nota_quiz3, nota_total])
+            data.append([nombres, apellidos, nota_quiz1, quiz1_20, nota_quiz2, quiz2_20, nota_quiz3, quiz3_20, per_completacion, progreso_x_8, calificacion_final])
 
+        # Agregar las filas de texto "Quiz 1", "Quiz 2", "Quiz 3", "Progreso (%)", y "Progreso x 8/100" arriba de las columnas correspondientes en la tabla
+        data.insert(1, ["", "", "Calificación", "Nota (20)", "Calificación", "Nota (20)", "Calificación", "Nota (20)", "Progreso (%)", "Calificación", ""])
+        
         # Crear una tabla con los datos
         table = Table(data)
 
         # Establecer el estilo de la tabla
-        style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+                            ('SPAN', (2, 0), (3, 0)),
+                            ('SPAN', (4, 0), (5, 0)),
+                            ('SPAN', (8, 0), (9, 0)),
+                            ('SPAN', (6, 0), (7, 0)),
+                            ('SPAN', (0, 0), (0, 1)),
+                            ('SPAN', (1, 0), (1, 1)),
+                            ('SPAN', (10, 0), (10, 1)),
+                            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
                             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                            ('FONTNAME', (0, 1), (-1, 1), 'Helvetica-Bold'),  # Establecer el estilo en negritas para la segunda fila
+                            ('BACKGROUND', (0, 1), (-1, 1), colors.lightblue),  # Establecer el fondo celeste claro para la segunda fila
                             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
                             ('GRID', (0, 0), (-1, -1), 1, colors.black)])
 
         table.setStyle(style)
 
         # Crear un objeto Story para el PDF
         story = []
+
+        # Agregar el logo en la parte superior derecha del PDF
+        logo_path = "Logo.png"  # Asegúrate de proporcionar la ruta correcta a tu imagen
+        logo = ReportLabImage(logo_path, width=80, height=80)  # Ajusta el ancho y alto según tus necesidades
+        logo.hAlign = 'RIGHT'  # Alinea el logo a la derecha
+        story.append(logo)
+
+        # Agregar el texto personalizado en la parte superior izquierda con el nombre del colegio y el nombre del profesor
+        texto_personalizado = f"Finanzas en mi Escuela (feme)<br/>Colegio: {colegio_nombre}<br/>{modulo_primer_estudiante}<br/>Grado: {primer_estudiante_grado}<br/>Sección: {primer_estudiante_seccion}<br/>Profesor: {nombre_profesor}"
+
+        styles = getSampleStyleSheet()
+        style = styles['Normal']
+        p = Paragraph(texto_personalizado, style)
+        story.append(p)
+
+        # Agregar un espacio en blanco antes de la tabla
+        story.append(Spacer(1, 12))
+
+        # Agregar la tabla
         story.append(table)
 
         # Construir el PDF
@@ -1016,3 +1082,138 @@ def generar_reporte_excel(request, id_profe):
     wb.save(response)
 
     return response
+
+
+class GenerarReporteNotasEstudiante(APIView):
+    def get(self, request, id_v):
+        # Verificar si el estudiante existe en EstatusValu
+        estudiante = get_object_or_404(EstatusValuFormato, id_v=id_v)
+
+        # Obtener el uuid_salon del estudiante
+        uuid_salon = estudiante.id_v.uuid_salon.uuid_salon
+
+        # Obtener el nombre del colegio y el id del profesor usando el uuid_salon del estudiante
+        try:
+            salon_info = SalonInfoProfe.objects.get(uuid_salon=uuid_salon)
+            colegio_nombre = salon_info.colegio
+            id_profe = salon_info.id_profe
+        except SalonInfoProfe.DoesNotExist:
+            colegio_nombre = "Nombre del Colegio no encontrado"
+            id_profe = None
+
+        # Obtener el nombre y apellidos del profesor si id_profe no es None
+        nombre_profesor = ""
+        if id_profe is not None:
+            try:
+                profesor = Usuarios.objects.get(id_v=id_profe)
+                nombre_profesor = f"{profesor.nombres} {profesor.apellidos}"
+            except Usuarios.DoesNotExist:
+                nombre_profesor = "Nombre del Profesor no encontrado"
+
+        # Obtener el valor del campo 'modulo' del estudiante
+        modulo_estudiante = estudiante.modulo
+
+        # Crear un PDF con orientación horizontal y un tamaño de página personalizado
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="reporte_notas_estudiante.pdf"'
+
+        # Cambiar el tamaño de la página a un tamaño personalizado
+        doc = SimpleDocTemplate(response, pagesize=(948, 600))
+
+        # Crear una lista para almacenar los datos de la tabla
+        data = [["Nombres", "Apellidos", "Quiz 1", "", "Quiz 2", "", "Quiz 3", "", "Progreso", "", "Calificación Final"]]
+
+        # Obtener los campos necesarios de EstatusValu para el estudiante
+        nota_quiz1 = estudiante.nota_quiz1
+        nota_quiz2 = estudiante.nota_quiz2
+        nota_quiz3 = estudiante.nota_quiz3
+        calificacion_final = estudiante.nota_total
+        per_completacion = estudiante.per_completacion
+
+        # Calcular los valores para las columnas "Quiz 1 (20)", "Quiz 2 (20)" y "Quiz 3 (20)" con un máximo de 2 decimales
+        quiz1_20 = round(nota_quiz1 * 5, 2)
+        quiz2_20 = round(nota_quiz2 * 5, 2)
+        quiz3_20 = round(nota_quiz3 * 5, 2)
+        
+        # Calcular el valor para la columna "Progreso x 8/100"
+        progreso_x_8 = round(per_completacion * 8 / 100, 2)
+
+        # Obtener los campos necesarios de Usuarios para el estudiante
+        nombres = estudiante.id_v.nombres
+        apellidos = estudiante.id_v.apellidos
+        grado_estudiante = estudiante.id_v.grado
+        seccion_estudiante = estudiante.id_v.seccion
+
+        # Agregar los datos a la lista
+        data.append([nombres, apellidos, nota_quiz1, quiz1_20, nota_quiz2, quiz2_20, nota_quiz3, quiz3_20, per_completacion, progreso_x_8, calificacion_final])
+
+        # Agregar las filas de texto "Quiz 1", "Quiz 2", "Quiz 3", "Progreso (%)", y "Progreso x 8/100" arriba de las columnas correspondientes en la tabla
+        data.insert(1, ["", "", "Calificación", "Nota (20)", "Calificación", "Nota (20)", "Calificación", "Nota (20)", "Progreso (%)", "Calificación", ""])
+        
+        # Crear una tabla con los datos
+        table = Table(data)
+
+        # Establecer el estilo de la tabla
+        style = TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+                            ('SPAN', (2, 0), (3, 0)),
+                            ('SPAN', (4, 0), (5, 0)),
+                            ('SPAN', (8, 0), (9, 0)),
+                            ('SPAN', (6, 0), (7, 0)),
+                            ('SPAN', (0, 0), (0, 1)),
+                            ('SPAN', (1, 0), (1, 1)),
+                            ('SPAN', (10, 0), (10, 1)),
+                            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+                            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                            ('FONTNAME', (0, 1), (-1, 1), 'Helvetica-Bold'),
+                            ('BACKGROUND', (0, 1), (-1, 1), colors.lightblue),
+                            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                            ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+
+        table.setStyle(style)
+
+        # Crear un objeto Story para el PDF
+        story = []
+
+        # Agregar el texto personalizado en la parte superior izquierda con el nombre del colegio y el nombre del profesor
+        texto_personalizado = f"Finanzas en mi Escuela (feme)<br/>Colegio: {colegio_nombre}<br/>Módulo: {modulo_estudiante}<br/>Grado: {grado_estudiante}<br/>Sección: {seccion_estudiante}<br/>Profesor: {nombre_profesor}<br/>"
+
+        styles = getSampleStyleSheet()
+        style = styles['Normal']
+        p = Paragraph(texto_personalizado, style)
+        story.append(p)
+
+        # Agregar un espacio en blanco antes de la tabla
+        story.append(Spacer(1, 12))
+
+        # Agregar la tabla
+        story.append(table)
+
+        # Agregar un espacio en blanco entre la tabla y la información adicional
+        story.append(Spacer(1, 24))
+
+        completed_at = str(estudiante.completed_at)
+        fecha_q1 = str(estudiante.fecha_q1)
+        fecha_q2 = str(estudiante.fecha_q2)
+        fecha_q3 = str(estudiante.fecha_q3)
+        started_at = str(estudiante.started_at)
+        last_sign_in = str(estudiante.last_sign_in)
+
+        # Información adicional
+        informacion_adicional = [
+            f"Fecha de completación del Módulo: {completed_at[:10]}",
+            f"Fecha completación Quiz 1: {fecha_q1[:10]}",
+            f"Fecha completación Quiz 2: {fecha_q2[:10]}",
+            f"Fecha completación Quiz 3: {fecha_q3[:10]}",
+            f"Fecha de Inicio del Módulo: {started_at[:10]}",
+            f"Último inicio de sesión: {last_sign_in[:10]}"
+        ]
+
+        for info in informacion_adicional:
+            p = Paragraph(info, style)
+            story.append(p)
+
+        # Construir el PDF
+        doc.build(story)
+
+        return response

@@ -7,9 +7,13 @@ class CustomLoginView(LoginView):
         response = super().post(request, *args, **kwargs)
         
         if self.user:
-            usuario = Usuarios.objects.get(email=self.user.email)
-            id_v = usuario.id_v
-            response.data['id_v'] = id_v
+            try:
+                usuario = Usuarios.objects.get(email=self.user.email)
+                id_v = usuario.id_v
+                response.data['id_v'] = id_v
+            except Usuarios.DoesNotExist:
+                id_v = ""  # Si no se encuentra el usuario, asigna un valor vacío a id_v
+                response.data['id_v'] = id_v
 
         return response
     
